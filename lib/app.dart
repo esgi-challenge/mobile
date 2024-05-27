@@ -4,18 +4,25 @@ import 'package:heroicons/heroicons.dart';
 import 'package:mobile/calendar/calendar_screen.dart';
 import 'package:mobile/chat/chat_screen.dart';
 import 'package:mobile/infos/info_screen.dart';
+import 'package:mobile/login/login_screen.dart';
 import 'package:mobile/more/more_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 final _router = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/login',
   navigatorKey: _rootNavigatorKey,
   routes: [
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: '/login',
+      pageBuilder: (context, state) {
+        return const NoTransitionPage(child: LoginScreen());
+      },
+    ),
     ShellRoute(
         navigatorKey: _shellNavigatorKey,
         pageBuilder: (context, state, child) {
-          print("ANTOINE");
           return NoTransitionPage(
             child: NavigationBar(
               child: child,

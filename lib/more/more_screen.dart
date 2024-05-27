@@ -325,7 +325,24 @@ class MoreCoursesScreen extends StatelessWidget {
                               color: Colors.white,
                             ),
                           ],
-                        )
+                        ),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            const Text(
+                              "Moyenne: 14.66",
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Color.fromRGBO(160, 161, 161, 1),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
