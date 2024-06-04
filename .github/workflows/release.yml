@@ -43,7 +43,7 @@ jobs:
         run: |
           git log ${{ env.old_tag }}..HEAD --pretty=format:"[%h](https://github.com/esgi-challenge/mobile/commit/%H): %s" > commits.txt
           COMMITS=$(cat commits.txt)
-          echo "List of new commits : ${COMMITS}"
+          echo "List of all the new commits : ${COMMITS}"
           echo "commits=${COMMITS}" >> $GITHUB_ENV
 
       - name: Create Release
