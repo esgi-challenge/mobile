@@ -3,10 +3,10 @@ name: Release
 on:
   pull_request:
     branches:
-      - master
+      - main
   push:
     branches:
-      - maste
+      - main
 
 jobs:
   create-new-release:
@@ -25,17 +25,32 @@ jobs:
         id: last-tag
         run: |
           git fetch --tags
-          echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
+          echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
 
       - name: Build flutter web app
         run: flutter build apk --release
-
 
       - name: Create new tag
         id: new-tag
         run: |
           NEW_TAG=v$(date +'%d.%m.%Y-%Hh%M')
-          echo "NEW_TAG=${NEW_TAG}"
+          echo "Creating new tag : ${NEW_TAG}"
           git tag $NEW_TAG
           git push origin $NEW_TAG
-          echo "::set-output name=new_tag::$NEW_TAG"
+          echo "new_tag=${NEW_TAG}" >> $GITHUB_ENV
+
+      - name: Get commit messages
+        id: commits
+        run: |
+          LAST_TAG=${{ env.tag }}
+          git log ${LAST_TAG}..HEAD --pretty=format:"[%h](https://github.com/esgi-challenge/mobile/commit/%H): %s" > commits.txt
+          echo "commits=$(cat commits.txt)" >> $GITHUB_ENV
+
+      - name: Create Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create ${{ env.new_tag }} \
+            build/app/outputs/flutter-apk/app-release.apk \
+            --title "Release ${{ env.new_tag }}" \
+            --notes "${{ env.commits }}"
