@@ -22,29 +22,29 @@ jobs:
           channel: stable
 
       - name: Get the last tag
-        id: last-tag
         run: |
           git fetch --tags
-          echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+          OLD_TAG=$(git describe --tags --abbrev=0)
+          echo "Latest tag is : ${OLD_TAG}"
+          echo "old_tag=${OLD_TAG}" >> $GITHUB_ENV
 
       - name: Build flutter web app
         run: flutter build apk --release
 
       - name: Create new tag
-        id: new-tag
         run: |
-          NEW_TAG=v$(date +'%d.%m.%Y-%Hh%M')
+          NEW_TAG=v$(TZ=Europe/Paris date +'%d.%m.%Y-%Hh%M')
           echo "Creating new tag : ${NEW_TAG}"
           git tag $NEW_TAG
           git push origin $NEW_TAG
           echo "new_tag=${NEW_TAG}" >> $GITHUB_ENV
 
       - name: Get commit messages
-        id: commits
         run: |
-          LAST_TAG=${{ env.tag }}
-          git log ${LAST_TAG}..HEAD --pretty=format:"[%h](https://github.com/esgi-challenge/mobile/commit/%H): %s" > commits.txt
-          echo "commits=$(cat commits.txt)" >> $GITHUB_ENV
+          git log ${{ env.old_tag }}..HEAD --pretty=format:"[%h](https://github.com/esgi-challenge/mobile/commit/%H): %s" > commits.txt
+          COMMITS=$(cat commits.txt)
+          echo "List of new commits : ${COMMITS}"
+          echo "commits=${COMMITS}" >> $GITHUB_ENV
 
       - name: Create Release
         env:
