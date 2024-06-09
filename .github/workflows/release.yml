@@ -10,18 +10,23 @@ on:
 
 jobs:
   create-new-release:
-    name: Create new APK release
+    name: Create new release with APK
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: debug list tags
+        run: git tag
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
 
-      - name: Get the last tag
+      - name: Get the latest tag
         run: |
           git fetch --tags
           OLD_TAG=$(git describe --tags --abbrev=0)
@@ -39,18 +44,16 @@ jobs:
           git push origin $NEW_TAG
           echo "new_tag=${NEW_TAG}" >> $GITHUB_ENV
 
-      - name: Get commit messages
-        run: |
-          git log ${{ env.old_tag }}..HEAD --pretty=format:"commit [%h](https://github.com/esgi-challenge/mobile/commit/%H) - %s" > commits.txt
-          COMMITS=$(cat commits.txt)
-          echo "List of all the new commits : ${COMMITS}"
-          echo "commits=${COMMITS}" >> $GITHUB_ENV
-
-      - name: Create Release
+      - name: Create release with new commits
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # retrieving commits should be on it's own step, but I did not succeed to store the multi line content inside env variables :
+          # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
+          echo -e "List of new features :\n" > commits.txt
+          git log ${{ env.old_tag }}..HEAD --pretty=format:"commit [%h](https://github.com/esgi-challenge/mobile/commit/%H) - %s" >> commits.txt
+
           gh release create ${{ env.new_tag }} \
             build/app/outputs/flutter-apk/app-release.apk \
             --title "Release ${{ env.new_tag }}" \
-            --notes "${{ env.commits }}"
+            --notes-file commits.txt
