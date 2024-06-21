@@ -1,24 +1,56 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:go_router/go_router.dart';
-import 'package:heroicons/heroicons.dart';
+import 'dart:convert';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:heroicons/heroicons.dart';
+import 'package:mobile/globals.dart' as globals;
+import 'package:http/http.dart' as http;
+
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  bool _isSent = false;
+  bool _isError = false;
+
+  final dio = Dio();
   final _formKey = GlobalKey<FormState>();
   final email = TextEditingController();
-  final password = TextEditingController();
 
   @override
   void dispose() {
     super.dispose();
     email.dispose();
+  }
+
+  Future<void> sendResetLink() async {
+    try {
+      var response =
+          await dio.post('${globals.apiUrl}/api/users/reset-link', data: {
+        'email': email.text,
+      });
+
+      if (response.statusCode == 204) {
+        setState(() {
+          _isSent = true;
+          _isError = false;
+        });
+      } else {
+        setState(() {
+          _isSent = true;
+          _isError = true;
+        });
+      }
+    } on DioException {
+      setState(() {
+        _isSent = true;
+        _isError = true;
+      });
+    }
   }
 
   @override
@@ -47,29 +79,60 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const Center(
                     child: Text(
-                      "Studies",
+                      "Mot de passe oublié",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 37,
+                        fontSize: 28,
                         fontWeight: FontWeight.w400,
                         color: Colors.white,
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 32,
+                  const SizedBox(
+                    height: 128,
                   ),
-                  const Image(image: AssetImage('assets/login.png')),
-                  SizedBox(
-                    height: 32,
-                  ),
+                  Builder(builder: (context) {
+                    if (_isError) {
+                      return const Column(
+                        children: [
+                          Text(
+                            "Il y a eu une erreur lors de l'envoi de mail",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.red,
+                            ),
+                          ),
+                          SizedBox(height: 20)
+                        ],
+                      );
+                    } else if (_isSent) {
+                      return const Column(
+                        children: [
+                          Text(
+                            "Nous avons envoye un mail avec le code de reinitialisation",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.green,
+                            ),
+                          ),
+                          SizedBox(height: 20)
+                        ],
+                      );
+                    }
+
+                    return Container();
+                  }),
                   Form(
                     key: _formKey,
                     child: Column(
                       children: [
                         TextFormField(
                           controller: email,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             hintText: "Enter your email",
                             hintStyle: TextStyle(color: Colors.white),
                             prefixIcon: HeroIcon(
@@ -79,53 +142,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           style: TextStyle(color: Colors.white),
                         ),
-                        TextFormField(
-                          controller: password,
-                          decoration: InputDecoration(
-                              hintText: "Enter your password",
-                              hintStyle: TextStyle(color: Colors.white),
-                              prefixIcon: HeroIcon(
-                                HeroIcons.lockClosed,
-                                color: Colors.white,
-                              )),
-                          obscureText: true,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        SizedBox(
-                          height: 32,
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                GoRouter router = GoRouter.of(context);
-
-                                router.push('/forgot-password');
-                              },
-                              child: Text(
-                                "Mot de passe oublié?",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
+                        const SizedBox(
                           height: 32,
                         ),
                         TextButton(
-                          onPressed: () {
-                            GoRouter router = GoRouter.of(context);
-                            print(email.text);
-                            print(password.text);
-                            router.go('/');
-                          },
+                          onPressed: sendResetLink,
                           style: TextButton.styleFrom(
                             minimumSize: Size.zero,
                             padding: EdgeInsets.zero,
@@ -149,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: const Padding(
                               padding: EdgeInsets.all(8.0),
                               child: Text(
-                                "Se Connecter",
+                                "Envoyer le lien",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 18,

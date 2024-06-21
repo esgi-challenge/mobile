@@ -3,9 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:mobile/calendar/calendar_screen.dart';
 import 'package:mobile/chat/chat_screen.dart';
+import 'package:mobile/forgot_password/forgot_password_screen.dart';
 import 'package:mobile/infos/info_screen.dart';
 import 'package:mobile/login/login_screen.dart';
 import 'package:mobile/more/more_screen.dart';
+import 'package:mobile/register/register_screen.dart';
+import 'package:mobile/reset_password/reset_password_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -18,6 +21,30 @@ final _router = GoRouter(
       path: '/login',
       pageBuilder: (context, state) {
         return const NoTransitionPage(child: LoginScreen());
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: '/register',
+      pageBuilder: (context, state) {
+        return const NoTransitionPage(child: RegisterScreen());
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: '/forgot-password',
+      pageBuilder: (context, state) {
+        return const NoTransitionPage(child: ForgotPasswordScreen());
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: '/reset-password/:code',
+      pageBuilder: (context, state) {
+        return NoTransitionPage(
+            child: ResetPasswordScreen(
+          code: state.pathParameters['code'] ?? "",
+        ));
       },
     ),
     ShellRoute(
