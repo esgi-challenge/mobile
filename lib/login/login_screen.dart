@@ -198,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   spreadRadius: 0,
                                   blurRadius: 5,
                                   offset: Offset(
-                                      0, 3), // changes position of shadow
+                                      0, 3),
                                 ),
                               ],
                             ),
