@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:heroicons/heroicons.dart';
+import 'package:mobile/globals.dart' as globals;
+import 'package:dio/dio.dart';
+import 'package:mobile/login/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,11 +16,41 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final email = TextEditingController();
   final password = TextEditingController();
+  final dio = Dio();
+  bool _isError = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
     super.dispose();
     email.dispose();
+  }
+
+  Future<void> login(BuildContext context, VoidCallback onSuccess) async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      var response = await dio.post('${globals.apiUrl}/api/auth/login',
+          data: {'password': password.text, 'email': email.text});
+
+      if (response.statusCode == 200) {
+        await AuthService.saveJwt(response.data["token"]);
+        onSuccess.call();
+      } else {
+        setState(() {
+          _isError = true;
+        });
+      }
+    } on DioException {
+      setState(() {
+        _isError = true;
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -63,6 +95,26 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     height: 32,
                   ),
+                  Builder(builder: (context) {
+                    if (_isError) {
+                      return const Column(
+                        children: [
+                          Text(
+                            "Votre email ou mot de passe n'est pas bon",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.red,
+                            ),
+                          ),
+                          SizedBox(height: 20)
+                        ],
+                      );
+                    }
+
+                    return Container();
+                  }),
                   Form(
                     key: _formKey,
                     child: Column(
@@ -120,12 +172,16 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: 32,
                         ),
                         TextButton(
-                          onPressed: () {
-                            GoRouter router = GoRouter.of(context);
-                            print(email.text);
-                            print(password.text);
-                            router.go('/');
-                          },
+                          onPressed: !_isLoading
+                              ? () => login(context, () {
+                                    if (!mounted) {
+                                      return;
+                                    }
+
+                                    GoRouter router = GoRouter.of(context);
+                                    router.push('/');
+                                  })
+                              : null,
                           style: TextButton.styleFrom(
                             minimumSize: Size.zero,
                             padding: EdgeInsets.zero,
@@ -146,17 +202,28 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ],
                             ),
-                            child: const Padding(
+                            child: Padding(
                               padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                "Se Connecter",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
+                              child: _isLoading
+                                  ? const Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 3,
+                                        )
+                                      ],
+                                    )
+                                  : const Text(
+                                      "Se Connecter",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                             ),
                           ),
                         ),
