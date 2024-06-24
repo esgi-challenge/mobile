@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:go_router/go_router.dart';
-import 'package:heroicons/heroicons.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -14,13 +11,12 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   late QRViewController _controller;
   final GlobalKey _qrKey = GlobalKey(debugLabel: 'QR');
-  final _formKey = GlobalKey<FormState>();
   String loginCode = '';
   final password = TextEditingController();
 
   @override
   void dispose() {
-    _controller?.dispose();
+    _controller.dispose();
     super.dispose();
     password.dispose();
   }

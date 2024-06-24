@@ -1,18 +1,19 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:mobile/globals.dart' as globals;
 
-class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key, required this.code});
+class InvitationRegisterScreen extends StatefulWidget {
+  const InvitationRegisterScreen({super.key, required this.code});
   final String code;
 
   @override
-  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
+  State<InvitationRegisterScreen> createState() =>
+      _InvitationRegisterScreenState();
 }
 
-class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
-  bool _isSent = false;
+class _InvitationRegisterScreenState extends State<InvitationRegisterScreen> {
   bool _isError = false;
 
   final dio = Dio();
@@ -27,29 +28,25 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     passwordConfirmation.dispose();
   }
 
-  Future<void> sendResetLink() async {
+  Future<void> setPassword(BuildContext context, VoidCallback onSuccess) async {
     if (password.text != passwordConfirmation.text) {
       return;
     }
 
     try {
-      var response = await dio.post('${globals.apiUrl}/api/auth/reset-password',
-          data: {'password': password.text, 'code': widget.code});
+      var response = await dio.post(
+          '${globals.apiUrl}/api/auth/invitation-code',
+          data: {'password': password.text, 'invitationCode': widget.code});
 
-      if (response.statusCode == 204) {
-        setState(() {
-          _isSent = true;
-          _isError = false;
-        });
+      if (response.statusCode == 200) {
+        onSuccess.call();
       } else {
         setState(() {
-          _isSent = true;
           _isError = true;
         });
       }
     } on DioException {
       setState(() {
-        _isSent = true;
         _isError = true;
       });
     }
@@ -81,10 +78,24 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 children: [
                   const Center(
                     child: Text(
-                      "Entrez votre nouveau mot de passe",
+                      "Bienvenu dans Studies",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 28,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  const Center(
+                    child: Text(
+                      "Entrez le mot de passe qui sera associe a votre email",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
                         fontWeight: FontWeight.w400,
                         color: Colors.white,
                       ),
@@ -115,27 +126,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       return const Column(
                         children: [
                           Text(
-                            "Il y a eu une erreur lors de la reinitialistion de votre mot de passe",
+                            "Il y a eu une erreur lors de la creation de votre compte",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
                               color: Colors.red,
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                        ],
-                      );
-                    } else if (_isSent) {
-                      return const Column(
-                        children: [
-                          Text(
-                            "Nous avons reinitialiser votre mot de passe",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.green,
                             ),
                           ),
                           SizedBox(height: 20)
@@ -152,7 +148,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         TextFormField(
                           controller: password,
                           decoration: const InputDecoration(
-                            hintText: "Enter votre nouveau password",
+                            hintText: "Entrer votre mot de passe",
                             hintStyle: TextStyle(color: Colors.white),
                             prefixIcon: HeroIcon(
                               HeroIcons.lockClosed,
@@ -163,12 +159,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           obscureText: true,
                         ),
                         const SizedBox(
-                          height: 32,
+                          height: 16,
                         ),
                         TextFormField(
                           controller: passwordConfirmation,
                           decoration: const InputDecoration(
-                            hintText: "Confirmez votre nouveau mot de passe",
+                            hintText: "Confirmer votre mot de passe",
                             hintStyle: TextStyle(color: Colors.white),
                             prefixIcon: HeroIcon(
                               HeroIcons.lockClosed,
@@ -182,7 +178,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           height: 32,
                         ),
                         TextButton(
-                          onPressed: sendResetLink,
+                          onPressed: () => setPassword(context, () {
+                            if (!mounted) {
+                              return;
+                            }
+
+                            GoRouter router = GoRouter.of(context);
+                            router.push('/');
+                          }),
                           style: TextButton.styleFrom(
                             minimumSize: Size.zero,
                             padding: EdgeInsets.zero,
@@ -206,7 +209,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             child: const Padding(
                               padding: EdgeInsets.all(8.0),
                               child: Text(
-                                "Reinitialiser le mot de passe",
+                                "Creer votre compte",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 18,

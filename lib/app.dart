@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:mobile/calendar/calendar_screen.dart';
 import 'package:mobile/chat/chat_screen.dart';
 import 'package:mobile/forgot_password/forgot_password_screen.dart';
 import 'package:mobile/infos/info_screen.dart';
+import 'package:mobile/invitation_register/invitation_register_screen.dart';
+import 'package:mobile/login/blocs/auth_bloc.dart';
+import 'package:mobile/login/blocs/auth_event.dart';
 import 'package:mobile/login/login_screen.dart';
+import 'package:mobile/login/services/auth_service.dart';
 import 'package:mobile/more/more_screen.dart';
 import 'package:mobile/register/register_screen.dart';
 import 'package:mobile/reset_password/reset_password_screen.dart';
@@ -15,6 +20,12 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>();
 final _router = GoRouter(
   initialLocation: '/login',
   navigatorKey: _rootNavigatorKey,
+  redirect: (context, state) async {
+    final jwt = await AuthService.init();
+    if (state.fullPath == '/login' && jwt != null) {
+      return '/';
+    }
+  },
   routes: [
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
@@ -43,6 +54,16 @@ final _router = GoRouter(
       pageBuilder: (context, state) {
         return NoTransitionPage(
             child: ResetPasswordScreen(
+          code: state.pathParameters['code'] ?? "",
+        ));
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: '/invite/:code',
+      pageBuilder: (context, state) {
+        return NoTransitionPage(
+            child: InvitationRegisterScreen(
           code: state.pathParameters['code'] ?? "",
         ));
       },
@@ -94,32 +115,35 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: _router,
-      debugShowCheckedModeBanner: true,
-      title: "Studies",
-      // routes: {
-      //   '/calendar': (context) => const CalendarScreen(),
-      // },
-      // initialRoute: '/calendar',
-      // home: const NavigationBar(),
-      theme: ThemeData(
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            selectedItemColor: Color.fromRGBO(109, 53, 172, 1),
-            unselectedLabelStyle:
-                TextStyle(color: Color.fromRGBO(190, 191, 190, 1)),
-            unselectedItemColor: Color.fromRGBO(190, 191, 190, 1),
-            unselectedIconTheme:
-                IconThemeData(color: Color.fromRGBO(190, 191, 190, 1)),
-            selectedIconTheme:
-                IconThemeData(color: Color.fromRGBO(109, 53, 172, 1))),
-        textTheme: const TextTheme(
-          displayLarge: TextStyle(
-            color: Colors.amber,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
+    return BlocProvider(
+      create: (context) => AuthBloc()..add(AuthInit()),
+      child: MaterialApp.router(
+        routerConfig: _router,
+        debugShowCheckedModeBanner: true,
+        title: "Studies",
+        // routes: {
+        //   '/calendar': (context) => const CalendarScreen(),
+        // },
+        // initialRoute: '/calendar',
+        // home: const NavigationBar(),
+        theme: ThemeData(
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              selectedItemColor: Color.fromRGBO(109, 53, 172, 1),
+              unselectedLabelStyle:
+                  TextStyle(color: Color.fromRGBO(190, 191, 190, 1)),
+              unselectedItemColor: Color.fromRGBO(190, 191, 190, 1),
+              unselectedIconTheme:
+                  IconThemeData(color: Color.fromRGBO(190, 191, 190, 1)),
+              selectedIconTheme:
+                  IconThemeData(color: Color.fromRGBO(109, 53, 172, 1))),
+          textTheme: const TextTheme(
+            displayLarge: TextStyle(
+              color: Colors.amber,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),
