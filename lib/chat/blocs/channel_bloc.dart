@@ -20,6 +20,7 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
         final channels = await chatService.getChannels();
 
         dynamic chatters;
+
         if (userKind == 1) {
           chatters = await chatService.getStudents();
         } else if (userKind == 0) {
@@ -39,7 +40,8 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
         } else {
           originalChatters ??= [];
           originalChannels ??= [];
-          emit(ChannelLoaded(channels: originalChannels!, chatters: originalChatters!));
+          emit(ChannelLoaded(
+              channels: originalChannels!, chatters: originalChatters!));
         }
       } on Exception catch (e) {
         emit(ChannelError(errorMessage: e.toString()));
@@ -54,7 +56,8 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
         return chatter['lastname'].toLowerCase().startsWith(query);
       }).toList();
 
-      emit(ChannelLoaded(channels: originalChannels!, chatters: filteredChatters));
+      emit(ChannelLoaded(
+          channels: originalChannels!, chatters: filteredChatters));
     });
 
     on<AddChannel>((event, emit) async {
@@ -67,7 +70,8 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
         }
       } on Exception catch (e) {
         originalChannels ??= [];
-        emit(ChannelLoaded(channels: originalChannels!, chatters: originalChatters!));
+        emit(ChannelLoaded(
+            channels: originalChannels!, chatters: originalChatters!));
       }
     });
   }

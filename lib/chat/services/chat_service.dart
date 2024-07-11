@@ -1,20 +1,16 @@
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:mobile/core/services/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:mobile/globals.dart' as globals;
 
 class ChatService {
-  final dio = Dio();
+  final dio = Api().dio;
 
   Future<List<dynamic>?> getChannels() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('kAuth');
     try {
       final response = await dio.get(
-        '${globals.apiUrl}/api/chats/channel',
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'}
-        ),
+        '/api/chats/channel',
       );
 
       if (response.statusCode == 200) {
@@ -28,14 +24,9 @@ class ChatService {
   }
 
   Future<dynamic> getChannelById(int id) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('kAuth');
     try {
       final response = await dio.get(
-        '${globals.apiUrl}/api/chats/channel/$id',
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'}
-        ),
+        '/api/chats/channel/$id',
       );
 
       if (response.statusCode == 200) {
@@ -49,14 +40,9 @@ class ChatService {
   }
 
   Future<List<dynamic>?> getStudents() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('kAuth');
     try {
       final response = await dio.get(
-        '${globals.apiUrl}/api/chats/students',
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'}
-        ),
+        '/api/chats/students',
       );
 
       if (response.statusCode == 200) {
@@ -70,14 +56,9 @@ class ChatService {
   }
 
   Future<List<dynamic>?> getTeachers() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('kAuth');
     try {
       final response = await dio.get(
-        '${globals.apiUrl}/api/chats/teachers',
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'}
-        ),
+        '/api/chats/teachers',
       );
 
       if (response.statusCode == 200) {
@@ -95,16 +76,10 @@ class ChatService {
     final token = prefs.getString('kAuth');
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
     try {
-      final response = await dio.post(
-        '${globals.apiUrl}/api/chats/channel',
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'}
-        ),
-        data: {
-          'firstUserId': decodedToken['user']['id'],
-          'secondUserId': studentId,
-        }
-      );
+      final response = await dio.post('/api/chats/channel', data: {
+        'firstUserId': decodedToken['user']['id'],
+        'secondUserId': studentId,
+      });
 
       if (response.statusCode == 201) {
         return response.data;
