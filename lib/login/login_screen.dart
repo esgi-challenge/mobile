@@ -4,6 +4,7 @@ import 'package:heroicons/heroicons.dart';
 import 'package:mobile/globals.dart' as globals;
 import 'package:dio/dio.dart';
 import 'package:mobile/login/services/auth_service.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -35,8 +36,20 @@ class _LoginScreenState extends State<LoginScreen> {
           data: {'password': password.text, 'email': email.text});
 
       if (response.statusCode == 200) {
-        await AuthService.saveJwt(response.data["token"]);
-        onSuccess.call();
+        Map<String, dynamic> decodedToken = JwtDecoder.decode(response.data["token"]);
+        int userKind = decodedToken['user']['userKind'];
+        if (userKind > 1) {
+          setState(() {
+            _isError = true;
+            _isLoading = false;
+          });
+        } else {
+          await AuthService.saveJwt(response.data["token"]);
+          email.clear();
+          password.clear();
+          _isError = false;
+          onSuccess.call();
+        }
       } else {
         setState(() {
           _isError = true;
@@ -88,11 +101,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 32,
                   ),
                   const Image(image: AssetImage('assets/login.png')),
-                  SizedBox(
+                  const SizedBox(
                     height: 32,
                   ),
                   Builder(builder: (context) {
@@ -121,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         TextFormField(
                           controller: email,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             hintText: "Enter your email",
                             hintStyle: TextStyle(color: Colors.white),
                             prefixIcon: HeroIcon(
@@ -129,11 +142,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: Colors.white,
                             ),
                           ),
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                         TextFormField(
                           controller: password,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                               hintText: "Enter your password",
                               hintStyle: TextStyle(color: Colors.white),
                               prefixIcon: HeroIcon(
@@ -141,9 +154,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: Colors.white,
                               )),
                           obscureText: true,
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 32,
                         ),
                         Row(
@@ -152,11 +165,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             GestureDetector(
                               onTap: () {
+                                email.clear();
+                                password.clear();
                                 GoRouter router = GoRouter.of(context);
 
                                 router.push('/forgot-password');
                               },
-                              child: Text(
+                              child: const Text(
                                 "Mot de passe oublié?",
                                 style: TextStyle(
                                   color: Colors.white,
@@ -168,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 32,
                         ),
                         TextButton(
@@ -203,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ],
                             ),
                             child: Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8.0),
                               child: _isLoading
                                   ? const Row(
                                       mainAxisAlignment:
