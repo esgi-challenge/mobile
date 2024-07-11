@@ -43,9 +43,11 @@ class ScheduleScreen extends StatelessWidget {
             child: BlocBuilder<ScheduleBloc, ScheduleState>(
               builder: (context, state) {
                 if (state is! ScheduleLoaded) {
-                  return const CircularProgressIndicator(
-                    color: Color.fromRGBO(109, 53, 172, 1),
-                    strokeWidth: 3,
+                  return Center(
+                    child: const CircularProgressIndicator(
+                      color: Color.fromRGBO(109, 53, 172, 1),
+                      strokeWidth: 3,
+                    ),
                   );
                 }
 

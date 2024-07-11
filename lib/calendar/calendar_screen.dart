@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile/alert/alert.dart';
 import 'package:mobile/calendar/bloc/calendar_bloc.dart';
 import 'package:mobile/calendar/bloc/calendar_event.dart';
 import 'package:mobile/calendar/bloc/calendar_state.dart';
@@ -111,10 +112,25 @@ class CalendarScreen extends StatelessWidget {
                   children: [
                     BlocBuilder<CalendarBloc, CalendarState>(
                         builder: (context, state) {
+                      if (state is CalendarLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: Color.fromRGBO(109, 53, 172, 1),
+                            strokeWidth: 3,
+                          ),
+                        );
+                      }
+
+                      if (state is CalendarError) {
+                        return const Alert();
+                      }
+
                       if (state is! CalendarLoaded) {
-                        return const CircularProgressIndicator(
-                          color: Color.fromRGBO(109, 53, 172, 1),
-                          strokeWidth: 3,
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: Color.fromRGBO(109, 53, 172, 1),
+                            strokeWidth: 3,
+                          ),
                         );
                       }
 
