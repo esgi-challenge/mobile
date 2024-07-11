@@ -83,7 +83,7 @@ class _SignScreenState extends State<SignScreen> {
                   }
 
                   if (state is SignLoaded) {
-                    GoRouter.of(context).go('/calendar/${widget.id}');
+                    GoRouter.of(context).pop();
                   }
 
                   if (state is SignLoading) {
