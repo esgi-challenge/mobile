@@ -123,14 +123,14 @@ final _router = GoRouter(
             parentNavigatorKey: _shellNavigatorKey,
             path: '/chat',
             pageBuilder: (context, state) {
-              return const NoTransitionPage(child: ChatScreen());
+              return NoTransitionPage(child: ChatScreen());
             },
           ),
           GoRoute(
             parentNavigatorKey: _shellNavigatorKey,
-            path: '/chat/message',
+            path: '/chat/:id',
             pageBuilder: (context, state) {
-              return const NoTransitionPage(child: MessageScreen());
+              return NoTransitionPage(child: ChannelIdScreen(id: int.parse(state.pathParameters['id']!)));
             },
           ),
           GoRoute(
@@ -232,6 +232,12 @@ class NavigationBar extends StatefulWidget {
 class _NavigationBarState extends State<NavigationBar> {
   int _selectedIndex = 0;
 
+
+  Future<void> _logout(BuildContext context) async {
+    await AuthService.logout();
+    GoRouter.of(context).go('/login');
+  }
+
   static const List<MyCustomBottomNavBarItem> tabs = [
     MyCustomBottomNavBarItem(
       icon: HeroIcon(HeroIcons.calendarDays),
@@ -282,7 +288,7 @@ class _NavigationBarState extends State<NavigationBar> {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
           ),
@@ -371,7 +377,7 @@ class _NavigationBarState extends State<NavigationBar> {
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  GoRouter.of(context).go('/login');
+                  _logout(context);
                 },
               ),
             ],

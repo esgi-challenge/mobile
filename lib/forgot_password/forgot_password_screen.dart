@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:mobile/globals.dart' as globals;
 import 'package:http/http.dart' as http;
@@ -57,6 +58,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color.fromRGBO(72, 2, 151, 1),
+          leading: BackButton(
+            onPressed: () {
+              GoRouter router = GoRouter.of(context);
+              router.go('/login');
+            },
+          ),
+        ),
         body: SingleChildScrollView(
           child: Container(
             height: MediaQuery.of(context).size.height,
