@@ -66,8 +66,8 @@ class InfoScreen extends StatelessWidget {
                   BlocBuilder<InformationsBloc, InformationState>(
                     builder: (context, state) {
                       if (state.status == InformationStatus.loading) {
-                        return Center(
-                          child: const CircularProgressIndicator(
+                        return const Center(
+                          child: CircularProgressIndicator(
                             color: Color.fromRGBO(109, 53, 172, 1),
                             strokeWidth: 3,
                           ),

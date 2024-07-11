@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/alert/alert.dart';
 import 'package:mobile/core/services/calendar_service.dart';
 import 'package:mobile/signature/bloc/sign_bloc.dart';
 import 'package:mobile/signature/bloc/sign_event.dart';
@@ -82,8 +83,12 @@ class _SignScreenState extends State<SignScreen> {
                     );
                   }
 
+                  if (state is SignError) {
+                    return const Alert();
+                  }
+
                   if (state is SignLoaded) {
-                    GoRouter.of(context).pop();
+                    GoRouter.of(context).pop('/calendar/${widget.id}');
                   }
 
                   if (state is SignLoading) {
