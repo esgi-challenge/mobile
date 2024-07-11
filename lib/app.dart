@@ -20,6 +20,7 @@ import 'package:mobile/reset_password/reset_password_screen.dart';
 import 'package:mobile/profile/profile_screen.dart';
 import 'package:mobile/projects/projects_screen.dart';
 import 'package:mobile/schedule/schedule_screen.dart';
+import 'package:mobile/signature/sign_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -97,6 +98,16 @@ final _router = GoRouter(
             pageBuilder: (context, state) {
               return NoTransitionPage(
                   child: ScheduleScreen(
+                id: int.parse(state.pathParameters['id'] ?? '0'),
+              ));
+            },
+          ),
+          GoRoute(
+            parentNavigatorKey: _shellNavigatorKey,
+            path: '/calendar/:id/sign',
+            pageBuilder: (context, state) {
+              return NoTransitionPage(
+                  child: SignScreen(
                 id: int.parse(state.pathParameters['id'] ?? '0'),
               ));
             },

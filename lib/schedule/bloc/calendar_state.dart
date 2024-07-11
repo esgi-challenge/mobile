@@ -10,8 +10,12 @@ class ScheduleLoading extends ScheduleState {}
 
 class ScheduleLoaded extends ScheduleState {
   final Schedule schedule;
+  final bool signature;
 
-  ScheduleLoaded({required this.schedule});
+  ScheduleLoaded({
+    required this.schedule,
+    required this.signature,
+  });
 }
 
 class ScheduleError extends ScheduleState {

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -180,10 +181,11 @@ class ScheduleScreen extends StatelessWidget {
                             ),
                             Row(
                               children: [
-                                Container(
-                                  width: 32,
-                                  height: 32,
-                                  color: Colors.red,
+                                const CircleAvatar(
+                                  radius: 24,
+                                  backgroundImage: NetworkImage(
+                                    "https://i.pravatar.cc/360",
+                                  ),
                                 ),
                                 const SizedBox(
                                   width: 8,
@@ -204,9 +206,8 @@ class ScheduleScreen extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      width: double.infinity,
                       decoration: const BoxDecoration(
-                        color: Color.fromRGBO(249, 178, 53, 1),
+                        color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(4)),
                         boxShadow: [
                           BoxShadow(
@@ -218,14 +219,85 @@ class ScheduleScreen extends StatelessWidget {
                         ],
                       ),
                       child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: const Text(
-                          "Signer",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Signature",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromRGBO(109, 53, 172, 1)),
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            Row(
+                              children: [
+                                HeroIcon(
+                                  HeroIcons.handRaised,
+                                  color: !state.signature
+                                      ? Colors.red
+                                      : Colors.green,
+                                  size: 16,
+                                ),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  !state.signature
+                                      ? "Vous n'avez pas signé"
+                                      : "Vous avez déjà signé",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: !state.signature
+                                        ? Colors.red
+                                        : Colors.green,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => {
+                        if (!state.signature)
+                          GoRouter.of(context).push('/calendar/$id/sign')
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: !state.signature
+                              ? const Color.fromRGBO(249, 178, 53, 1)
+                              : const Color.fromRGBO(249, 178, 53, 0.4),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(4)),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color.fromRGBO(249, 178, 53, 0.1),
+                              spreadRadius: 0,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            "Signer",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),

@@ -12,7 +12,8 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       emit(ScheduleLoading());
       try {
         final schedule = await calendarService.getScheduleById(event.id);
-        emit(ScheduleLoaded(schedule: schedule));
+        final signature = await calendarService.getSignatureById(event.id);
+        emit(ScheduleLoaded(schedule: schedule, signature: signature));
       } on Exception catch (e) {
         emit(ScheduleError(errorMessage: e.toString()));
       }
