@@ -1,8 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:heroicons/heroicons.dart';
+import 'package:mobile/alert/alert.dart';
+import 'package:mobile/core/models/project.dart';
+import 'package:mobile/core/services/projects_service.dart';
+import 'package:mobile/projects/bloc/projects_bloc.dart';
+import 'package:mobile/projects/bloc/projects_event.dart';
+import 'package:mobile/projects/bloc/projects_state.dart';
 import 'package:mobile/projects/groups_screen.dart';
 import 'package:mobile/projects/my_group_screen.dart';
+
+const months = [
+  "Janvier",
+  "Fevrier",
+  "Mars",
+  "Avril",
+  "Mail",
+  "Juin",
+  "Juillet",
+  "Aout",
+  "Septembre",
+  "Octobre",
+  "Novembre",
+  "Decembre",
+];
 
 class ProjectsScreen extends StatelessWidget {
   const ProjectsScreen({super.key});
@@ -10,74 +32,99 @@ class ProjectsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: const Color.fromRGBO(245, 242, 249, 1),
-        body: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Flex(
-            direction: Axis.vertical,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Projets",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w400,
-                  color: Color.fromRGBO(109, 53, 172, 1),
+      child: BlocProvider(
+        create: (context) =>
+            ProjectsBloc(ProjectsService())..add(ProjectsInit()),
+        child: Scaffold(
+          backgroundColor: const Color.fromRGBO(245, 242, 249, 1),
+          body: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Flex(
+              direction: Axis.vertical,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Projets",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w400,
+                    color: Color.fromRGBO(109, 53, 172, 1),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 40),
-              Column(
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                            width: 1, color: Color.fromRGBO(72, 2, 151, 1)),
+                const SizedBox(height: 40),
+                Column(
+                  children: [
+                    Container(
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                              width: 1, color: Color.fromRGBO(72, 2, 151, 1)),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "2024",
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                                color: Color.fromRGBO(72, 2, 151, 1)),
+                          ),
+                          HeroIcon(
+                            HeroIcons.chevronDown,
+                            color: Color.fromRGBO(72, 2, 151, 1),
+                          ),
+                        ],
                       ),
                     ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "2024",
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w400,
-                              color: Color.fromRGBO(72, 2, 151, 1)),
-                        ),
-                        HeroIcon(
-                          HeroIcons.chevronDown,
-                          color: Color.fromRGBO(72, 2, 151, 1),
-                        ),
-                      ],
+                    const SizedBox(height: 20),
+                    BlocBuilder<ProjectsBloc, ProjectsState>(
+                      builder: (context, state) {
+                        if (state is ProjectsLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: Color.fromRGBO(109, 53, 172, 1),
+                              strokeWidth: 3,
+                            ),
+                          );
+                        }
+
+                        if (state is ProjectsError) {
+                          return const Alert();
+                        }
+
+                        if (state is ProjectsLoaded) {
+                          final List<Widget> widgets = [];
+
+                          for (var project in state.projects) {
+                            widgets.add(
+                              ProjectCard(
+                                project: project,
+                                title: project.title,
+                                course: project.course,
+                                dueDate:
+                                    "${project.endDate.day} ${months[project.endDate.month - 1]} ${project.endDate.year}",
+                                dueTime: "23:59",
+                              ),
+                            );
+                          }
+
+                          return Wrap(
+                            direction: Axis.horizontal,
+                            runSpacing: 8,
+                            children: widgets,
+                          );
+                        }
+
+                        return Container();
+                      },
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  ProjectCard(
-                    title: "Challenge Stack",
-                    course: "Flutter Golang DevOps",
-                    dueDate: "15 Avril 2024",
-                    dueTime: "23:59",
-                  ),
-                  const SizedBox(height: 8),
-                  ProjectCard(
-                    title: "Partiel",
-                    course: "Sécurité",
-                    dueDate: "15 Avril 2024",
-                    dueTime: "23:59",
-                  ),
-                  const SizedBox(height: 8),
-                  ProjectCard(
-                    title: "TP noté",
-                    course: "Golang",
-                    dueDate: "15 Avril 2024",
-                    dueTime: "23:59",
-                  ),
-                ],
-              )
-            ],
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -90,12 +137,15 @@ class ProjectCard extends StatelessWidget {
   final String course;
   final String dueDate;
   final String dueTime;
+  final Project project;
 
   const ProjectCard({
+    super.key,
     required this.title,
     required this.course,
     required this.dueDate,
     required this.dueTime,
+    required this.project,
   });
 
   @override
@@ -142,14 +192,13 @@ class ProjectCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        Container(
+                        const SizedBox(
                             width: 16,
                             height: 16,
                             child: HeroIcon(
                               HeroIcons.calendarDays,
                               color: Color.fromRGBO(247, 159, 2, 1),
-                            )
-                        ),
+                            )),
                         const SizedBox(width: 4),
                         Text(
                           dueDate,
@@ -159,14 +208,13 @@ class ProjectCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 32),
-                        Container(
+                        const SizedBox(
                             width: 16,
                             height: 16,
                             child: HeroIcon(
                               HeroIcons.clock,
                               color: Color.fromRGBO(247, 159, 2, 1),
-                            )
-                        ),
+                            )),
                         const SizedBox(width: 4),
                         Text(
                           dueTime,
@@ -182,9 +230,9 @@ class ProjectCard extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  _showBottomSheet(context);
+                  _showBottomSheet(context, project);
                 },
-                child: Container(
+                child: const SizedBox(
                   width: 32,
                   height: 32,
                   child: HeroIcon(
@@ -201,7 +249,7 @@ class ProjectCard extends StatelessWidget {
   }
 }
 
-void _showBottomSheet(BuildContext context) {
+void _showBottomSheet(BuildContext context, Project project) {
   showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
@@ -230,7 +278,10 @@ void _showBottomSheet(BuildContext context) {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MyGroupScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => MyGroupScreen(
+                            project: project,
+                          )),
                 );
               },
             ),

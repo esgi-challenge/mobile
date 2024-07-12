@@ -1,8 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
+import 'package:mobile/core/models/project.dart';
+
+const months = [
+  "Janvier",
+  "Fevrier",
+  "Mars",
+  "Avril",
+  "Mail",
+  "Juin",
+  "Juillet",
+  "Aout",
+  "Septembre",
+  "Octobre",
+  "Novembre",
+  "Decembre",
+];
 
 class MyGroupScreen extends StatelessWidget {
-  const MyGroupScreen({super.key});
+  final Project project;
+  const MyGroupScreen({super.key, required this.project});
 
   @override
   Widget build(BuildContext context) {
@@ -52,14 +69,14 @@ class MyGroupScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(12.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "TP noté",
-                        style: TextStyle(
+                        project.title,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Color.fromRGBO(72, 2, 151, 1),
@@ -67,7 +84,7 @@ class MyGroupScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        "Intégration - tailwindcss & sass",
+                        project.course,
                         style: TextStyle(
                           fontSize: 14,
                           color: Color.fromRGBO(72, 2, 151, 1),
@@ -83,7 +100,7 @@ class MyGroupScreen extends StatelessWidget {
                           ),
                           SizedBox(width: 4),
                           Text(
-                            "15 Avril 2024",
+                            "${project.endDate.day} ${months[project.endDate.month - 1]} ${project.endDate.year}",
                             style: TextStyle(
                               fontSize: 14,
                               color: Color.fromRGBO(247, 159, 2, 1),
@@ -97,7 +114,7 @@ class MyGroupScreen extends StatelessWidget {
                           ),
                           SizedBox(width: 4),
                           Text(
-                            "23h00",
+                            "23h59",
                             style: TextStyle(
                               fontSize: 14,
                               color: Color.fromRGBO(247, 159, 2, 1),
@@ -123,12 +140,12 @@ class MyGroupScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(12.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         "Intervenant",
                         style: TextStyle(
                           fontSize: 16,
@@ -136,18 +153,18 @@ class MyGroupScreen extends StatelessWidget {
                           color: Color.fromRGBO(72, 2, 151, 1),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Row(
                         children: [
-                          HeroIcon(
+                          const HeroIcon(
                             HeroIcons.userCircle,
                             color: Color.fromRGBO(109, 53, 172, 1),
                             size: 32,
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Text(
-                            "M. SOMBIE",
-                            style: TextStyle(
+                            "M. ${project.teacher}",
+                            style: const TextStyle(
                               fontSize: 14,
                               color: Color.fromRGBO(109, 53, 172, 1),
                             ),
@@ -158,98 +175,98 @@ class MyGroupScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color.fromRGBO(50, 50, 50, 0.1),
-                      spreadRadius: 0,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Membres",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(72, 2, 151, 1),
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Row(
-                        children: [
-                          HeroIcon(
-                            HeroIcons.userCircle,
-                            color: Color.fromRGBO(109, 53, 172, 1),
-                            size: 32,
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            "John DOE",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color.fromRGBO(109, 53, 172, 1),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 4),
-                      Row(
-                        children: [
-                          HeroIcon(
-                            HeroIcons.userCircle,
-                            color: Color.fromRGBO(109, 53, 172, 1),
-                            size: 32,
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            "John DOE",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color.fromRGBO(109, 53, 172, 1),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 4),
-                      Row(
-                        children: [
-                          HeroIcon(
-                            HeroIcons.userCircle,
-                            color: Color.fromRGBO(109, 53, 172, 1),
-                            size: 32,
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            "John DOE",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color.fromRGBO(109, 53, 172, 1),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              // const SizedBox(height: 32),
+              // Container(
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(8),
+              //     boxShadow: const [
+              //       BoxShadow(
+              //         color: Color.fromRGBO(50, 50, 50, 0.1),
+              //         spreadRadius: 0,
+              //         blurRadius: 5,
+              //         offset: Offset(0, 3),
+              //       ),
+              //     ],
+              //   ),
+              //   child: const Padding(
+              //     padding: EdgeInsets.all(12.0),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         Text(
+              //           "Membres",
+              //           style: TextStyle(
+              //             fontSize: 16,
+              //             fontWeight: FontWeight.bold,
+              //             color: Color.fromRGBO(72, 2, 151, 1),
+              //           ),
+              //         ),
+              //         SizedBox(height: 8),
+              //         Row(
+              //           children: [
+              //             HeroIcon(
+              //               HeroIcons.userCircle,
+              //               color: Color.fromRGBO(109, 53, 172, 1),
+              //               size: 32,
+              //             ),
+              //             SizedBox(width: 8),
+              //             Text(
+              //               "John DOE",
+              //               style: TextStyle(
+              //                 fontSize: 14,
+              //                 color: Color.fromRGBO(109, 53, 172, 1),
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //         SizedBox(height: 4),
+              //         Row(
+              //           children: [
+              //             HeroIcon(
+              //               HeroIcons.userCircle,
+              //               color: Color.fromRGBO(109, 53, 172, 1),
+              //               size: 32,
+              //             ),
+              //             SizedBox(width: 8),
+              //             Text(
+              //               "John DOE",
+              //               style: TextStyle(
+              //                 fontSize: 14,
+              //                 color: Color.fromRGBO(109, 53, 172, 1),
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //         SizedBox(height: 4),
+              //         Row(
+              //           children: [
+              //             HeroIcon(
+              //               HeroIcons.userCircle,
+              //               color: Color.fromRGBO(109, 53, 172, 1),
+              //               size: 32,
+              //             ),
+              //             SizedBox(width: 8),
+              //             Text(
+              //               "John DOE",
+              //               style: TextStyle(
+              //                 fontSize: 14,
+              //                 color: Color.fromRGBO(109, 53, 172, 1),
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+
               const SizedBox(height: 32),
               Container(
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   color: Color.fromRGBO(249, 178, 53, 1),
-                  borderRadius:
-                  BorderRadius.all(Radius.circular(4)),
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
                   boxShadow: [
                     BoxShadow(
                       color: Color.fromRGBO(249, 178, 53, 0.1),

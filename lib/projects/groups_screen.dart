@@ -96,7 +96,8 @@ class GroupsScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 8),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: const [
                                       Text(
                                         "John DOE",
@@ -132,7 +133,8 @@ class GroupsScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 8),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: const [
                                       Text(
                                         "John DOE",
@@ -167,7 +169,8 @@ class GroupsScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 8),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: const [
                                       Text(
                                         "John DOE",
