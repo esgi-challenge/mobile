@@ -1,4 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:mobile/alert/alert.dart';
+import 'package:mobile/attendances/bloc/attendance_bloc.dart';
+import 'package:mobile/attendances/bloc/attendance_event.dart';
+import 'package:mobile/attendances/bloc/attendance_state.dart';
+import 'package:mobile/core/services/calendar_service.dart';
+
+const months = [
+  "Janvier",
+  "Fevrier",
+  "Mars",
+  "Avril",
+  "Mail",
+  "Juin",
+  "Juillet",
+  "Aout",
+  "Septembre",
+  "Octobre",
+  "Novembre",
+  "Decembre",
+];
 
 class AttendancesScreen extends StatelessWidget {
   const AttendancesScreen({super.key});
@@ -6,50 +28,75 @@ class AttendancesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: Color.fromRGBO(245, 242, 249, 1),
-        body: Padding(
-          padding: EdgeInsets.all(32.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Mes absences",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w400,
-                  color: Color.fromRGBO(109, 53, 172, 1),
+      child: BlocProvider(
+        create: (context) =>
+            AttendanceBloc(CalendarService())..add(AttendanceInit()),
+        child: Scaffold(
+          backgroundColor: Color.fromRGBO(245, 242, 249, 1),
+          body: Padding(
+            padding: EdgeInsets.all(32.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Mes absences",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w400,
+                    color: Color.fromRGBO(109, 53, 172, 1),
+                  ),
                 ),
-              ),
-              SizedBox(height: 32),
-              AbsenceCard(
-                title: "Flutter",
-                date: "15 Avril 2024",
-                time: "8h00 - 9h30",
-                status: "Justifiée",
-                statusColor: Color.fromRGBO(137, 223, 144, 1),
-                onTap: () => _showBottomSheet(context),
-              ),
-              SizedBox(height: 8),
-              AbsenceCard(
-                title: "Tailwind CSS",
-                date: "12 Avril 2024",
-                time: "9h45 - 11h15",
-                status: "En attente",
-                statusColor: Color.fromRGBO(248, 195, 101, 1),
-                onTap: () => _showBottomSheet(context),
-              ),
-              SizedBox(height: 8),
-              AbsenceCard(
-                title: "Sécurité",
-                date: "11 Avril 2024",
-                time: "14h00 - 15h30",
-                status: "Injustifiée",
-                statusColor: Color.fromRGBO(238, 102, 102, 1),
-                onTap: () => _showBottomSheet(context),
-              ),
-            ],
+                const SizedBox(height: 32),
+                BlocBuilder<AttendanceBloc, AttendanceState>(
+                  builder: (context, state) {
+                    if (state is AttendanceLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Color.fromRGBO(109, 53, 172, 1),
+                          strokeWidth: 3,
+                        ),
+                      );
+                    }
+
+                    if (state is AttendanceError) {
+                      return const Alert();
+                    }
+
+                    if (state is AttendanceLoaded) {
+                      final List<Widget> widgets = [];
+
+                      state.schedules.forEach((schedule) {
+                        widgets.add(
+                          AbsenceCard(
+                            title: schedule.course,
+                            date:
+                                "${schedule.date.day} ${months[schedule.date.month - 1]} ${schedule.date.year}",
+                            time:
+                                "${DateFormat.Hm().format(schedule.date)} - ${DateFormat.Hm().format(
+                              schedule.date.add(
+                                Duration(minutes: schedule.duration),
+                              ),
+                            )}",
+                            status: "En attente",
+                            statusColor: Color.fromRGBO(248, 195, 101, 1),
+                            onTap: () => _showBottomSheet(context),
+                          ),
+                        );
+                      });
+
+                      return Wrap(
+                        runSpacing: 8,
+                        direction: Axis.horizontal,
+                        children: widgets,
+                      );
+                    }
+
+                    return Container();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -66,6 +113,7 @@ class AbsenceCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const AbsenceCard({
+    super.key,
     required this.title,
     required this.date,
     required this.time,
@@ -110,7 +158,8 @@ class AbsenceCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today, size: 16, color: Color.fromRGBO(247, 159, 2, 1)),
+                      const Icon(Icons.calendar_today,
+                          size: 16, color: Color.fromRGBO(247, 159, 2, 1)),
                       const SizedBox(width: 4),
                       Text(
                         date,
@@ -124,7 +173,8 @@ class AbsenceCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.access_time, size: 16, color: Color.fromRGBO(247, 159, 2, 1)),
+                      const Icon(Icons.access_time,
+                          size: 16, color: Color.fromRGBO(247, 159, 2, 1)),
                       const SizedBox(width: 4),
                       Text(
                         time,
@@ -203,18 +253,20 @@ void _showBottomSheet(BuildContext context) {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color.fromRGBO(245, 242, 249, 1),
+                  color: const Color.fromRGBO(109, 53, 172, 1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: TextField(
+                child: const TextField(
                   maxLines: 3,
-                  decoration: const InputDecoration(
-                    hintText: "Bonjour, j’étais absent hier. Ci-joint l’arrêt donné par mon médecin.",
+                  decoration: InputDecoration(
+                    hintText:
+                        "Bonjour, j’étais absent hier. Ci-joint l’arrêt donné par mon médecin.",
                     hintStyle: TextStyle(
                       color: Color.fromRGBO(109, 53, 172, 1),
                     ),
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                   ),
                 ),
               ),

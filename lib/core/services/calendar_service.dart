@@ -47,6 +47,18 @@ class CalendarService {
     }
   }
 
+  Future<List<Schedule>> getAttendance() async {
+    final response = await dio.get(
+      '/api/schedules/unattended',
+    );
+    if (response.statusCode != 200) {
+      throw Exception("Error in the API");
+    }
+
+    final data = response.data as List<dynamic>;
+    return data.mapList((e) => Schedule.fromJson(e));
+  }
+
   Future<bool> signFor(int id, String code) async {
     final response =
         await dio.post('/api/schedules/$id/sign', data: {"code": code});
