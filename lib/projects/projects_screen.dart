@@ -254,7 +254,7 @@ void _showBottomSheet(BuildContext context, Project project) {
     context: context,
     builder: (BuildContext context) {
       return Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(24.0),
@@ -270,7 +270,7 @@ void _showBottomSheet(BuildContext context, Project project) {
                 color: Color.fromRGBO(247, 159, 2, 1),
               ),
               title: const Text(
-                "Suivi de mon groupe",
+                "Voir le Sujet",
                 style: TextStyle(
                   color: Color.fromRGBO(72, 2, 151, 1),
                 ),
@@ -286,7 +286,7 @@ void _showBottomSheet(BuildContext context, Project project) {
               },
             ),
             ListTile(
-              leading: HeroIcon(
+              leading: const HeroIcon(
                 HeroIcons.userGroup,
                 color: Color.fromRGBO(247, 159, 2, 1),
               ),
@@ -299,7 +299,8 @@ void _showBottomSheet(BuildContext context, Project project) {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => GroupsScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => GroupsScreen(project: project)),
                 );
               },
             ),

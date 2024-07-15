@@ -16,5 +16,38 @@ class ProjectsBloc extends Bloc<ProjectsEvent, ProjectsState> {
         emit(ProjectsError(errorMessage: e.toString()));
       }
     });
+
+    on<GroupLoad>((event, emit) async {
+      emit(ProjectsLoading());
+      try {
+        final groups = await projectsService.getGroups(event.id);
+        emit(GroupLoaded(groups: groups));
+      } on Exception catch (e) {
+        emit(ProjectsError(errorMessage: e.toString()));
+      }
+    });
+
+    on<GroupJoin>((event, emit) async {
+      emit(ProjectsLoading());
+      try {
+        await projectsService.quitGroup(event.projectId);
+        await projectsService.joinGroup(event.projectId, event.groupId);
+        final groups = await projectsService.getGroups(event.projectId);
+        emit(GroupLoaded(groups: groups));
+      } on Exception catch (e) {
+        emit(ProjectsError(errorMessage: e.toString()));
+      }
+    });
+
+    on<GroupQuit>((event, emit) async {
+      emit(ProjectsLoading());
+      try {
+        await projectsService.quitGroup(event.projectId);
+        final groups = await projectsService.getGroups(event.projectId);
+        emit(GroupLoaded(groups: groups));
+      } on Exception catch (e) {
+        emit(ProjectsError(errorMessage: e.toString()));
+      }
+    });
   }
 }
