@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:mobile/globals.dart' as globals;
-import 'package:http/http.dart' as http;
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -30,8 +27,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   Future<void> sendResetLink() async {
     try {
-      var response =
-          await dio.post('${globals.apiUrl}/api/users/reset-link', data: {
+      var response = await dio
+          .post('${dotenv.env['API_URL']}/api/users/reset-link', data: {
         'email': email.text,
       });
 

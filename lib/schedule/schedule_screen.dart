@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:intl/intl.dart';
 
@@ -26,16 +25,27 @@ const months = [
   "Decembre",
 ];
 
-class ScheduleScreen extends StatelessWidget {
+class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key, required this.id});
   final int id;
+
+  @override
+  State<ScheduleScreen> createState() => _ScheduleScreenState();
+}
+
+class _ScheduleScreenState extends State<ScheduleScreen> {
+  late GoogleMapController mapController;
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: BlocProvider(
         create: (context) =>
-            ScheduleBloc(CalendarService())..add(LoadSchedule(id)),
+            ScheduleBloc(CalendarService())..add(LoadSchedule(widget.id)),
         child: Scaffold(
           backgroundColor: Color.fromRGBO(245, 242, 249, 1),
           body: Padding(
@@ -140,7 +150,7 @@ class ScheduleScreen extends StatelessWidget {
                               height: 8,
                             ),
                             Text(
-                              state.schedule.campus,
+                              state.schedule.campus.name,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                   fontSize: 16,
@@ -150,6 +160,37 @@ class ScheduleScreen extends StatelessWidget {
                           ],
                         ),
                       ),
+                    ),
+                    Container(
+                      height: 180,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color.fromRGBO(249, 178, 53, 0.1),
+                            spreadRadius: 0,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: GoogleMap(
+                            onMapCreated: _onMapCreated,
+                            initialCameraPosition: CameraPosition(
+                                target: LatLng(state.schedule.campus.lat,
+                                    state.schedule.campus.lon),
+                                zoom: 11.0),
+                            markers: {
+                              Marker(
+                                  markerId:
+                                      MarkerId(state.schedule.campus.name),
+                                  position: LatLng(state.schedule.campus.lat,
+                                      state.schedule.campus.lon))
+                            },
+                          )),
                     ),
                     Container(
                       decoration: const BoxDecoration(
@@ -271,7 +312,8 @@ class ScheduleScreen extends StatelessWidget {
                     GestureDetector(
                       onTap: () => {
                         if (!state.signature)
-                          GoRouter.of(context).push('/calendar/$id/sign')
+                          GoRouter.of(context)
+                              .push('/calendar/${widget.id}/sign')
                       },
                       child: Container(
                         width: double.infinity,

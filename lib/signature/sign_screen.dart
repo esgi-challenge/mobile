@@ -32,7 +32,6 @@ class _SignScreenState extends State<SignScreen> {
     setState(() {
       _controller = controller;
       _controller.scannedDataStream.listen((scanData) {
-        print('Scanned data: ${scanData.code}');
         context.read<SignBloc>().add(
               Sign(scanData.code ?? ''),
             );

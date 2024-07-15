@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:mobile/globals.dart' as globals;
 import 'package:dio/dio.dart';
 import 'package:mobile/login/services/auth_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -32,11 +32,12 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _isLoading = true;
       });
-      var response = await dio.post('${globals.apiUrl}/api/auth/login',
+      var response = await dio.post('${dotenv.env['API_URL']}/api/auth/login',
           data: {'password': password.text, 'email': email.text});
 
       if (response.statusCode == 200) {
-        Map<String, dynamic> decodedToken = JwtDecoder.decode(response.data["token"]);
+        Map<String, dynamic> decodedToken =
+            JwtDecoder.decode(response.data["token"]);
         int userKind = decodedToken['user']['userKind'];
         if (userKind > 1) {
           setState(() {
@@ -212,8 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   color: Color.fromRGBO(249, 178, 53, 0.1),
                                   spreadRadius: 0,
                                   blurRadius: 5,
-                                  offset: Offset(
-                                      0, 3),
+                                  offset: Offset(0, 3),
                                 ),
                               ],
                             ),

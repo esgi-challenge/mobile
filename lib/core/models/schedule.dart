@@ -1,8 +1,10 @@
+import 'package:mobile/core/models/campus.dart';
+
 class Schedule {
   final int id;
   final DateTime date;
   final int duration;
-  final String campus;
+  final Campus campus;
   final String course;
   final String teacher;
 
@@ -16,16 +18,19 @@ class Schedule {
   });
 
   factory Schedule.fromJson(Map<String, dynamic> json) {
-    final date =
-        DateTime.fromMillisecondsSinceEpoch(json['schedule']['time'] * 1000);
+    final date = DateTime.fromMillisecondsSinceEpoch(
+        (json['time'] ?? json['schedule']['time']) * 1000);
 
     return Schedule(
-      id: json['schedule']['id'],
+      id: json['id'] ?? json['schedule']['id'],
       date: date,
-      duration: json['schedule']['duration'] ?? 0,
-      campus: json['campus']['name'],
-      course: json['course']['name'],
-      teacher: json['course']['teacher']['lastname'],
+      duration: json['duration'] ?? json['schedule']['duration'] ?? 0,
+      campus: Campus.fromJson(json['campus'] ?? json['schedule']['campus']),
+      course:
+          json['course']['name'] ?? json['schedule']['course']['name'] ?? "",
+      teacher: json['schedule']?['course']['teacher']['lastname'] ??
+          json['course']['teacher']['lastname'] ??
+          "",
     );
   }
 

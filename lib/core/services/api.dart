@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mobile/login/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:mobile/globals.dart' as globals;
 
 class Api {
   final dio = createDio();
@@ -15,7 +15,7 @@ class Api {
   static Dio createDio() {
     var dio = Dio(
       BaseOptions(
-        baseUrl: globals.apiUrl,
+        baseUrl: dotenv.env['API_URL']!,
         connectTimeout: const Duration(seconds: 5),
         receiveTimeout: const Duration(seconds: 5),
       ),

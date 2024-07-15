@@ -192,7 +192,7 @@ class CalendarScreen extends StatelessWidget {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          schedule.campus,
+                                          schedule.campus.name,
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ],

@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:mobile/globals.dart' as globals;
 
 class InvitationRegisterScreen extends StatefulWidget {
   const InvitationRegisterScreen({super.key, required this.code});
@@ -35,7 +35,7 @@ class _InvitationRegisterScreenState extends State<InvitationRegisterScreen> {
 
     try {
       var response = await dio.post(
-          '${globals.apiUrl}/api/auth/invitation-code',
+          '${dotenv.env['API_URL']}/api/auth/invitation-code',
           data: {'password': password.text, 'invitationCode': widget.code});
 
       if (response.statusCode == 200) {

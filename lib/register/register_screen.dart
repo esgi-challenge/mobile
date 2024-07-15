@@ -25,7 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() {
       _controller = controller;
       _controller.scannedDataStream.listen((scanData) {
-        print('Scanned data: ${scanData.code}');
+        print(' data: ${scanData.code}');
         // Handle the scanned data as desired
       });
     });

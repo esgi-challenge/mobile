@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:mobile/globals.dart' as globals;
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key, required this.code});
@@ -33,7 +33,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     }
 
     try {
-      var response = await dio.post('${globals.apiUrl}/api/auth/reset-password',
+      var response = await dio.post(
+          '${dotenv.env['API_URL']}/api/auth/reset-password',
           data: {'password': password.text, 'code': widget.code});
 
       if (response.statusCode == 204) {

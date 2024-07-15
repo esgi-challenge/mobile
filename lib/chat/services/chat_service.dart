@@ -2,7 +2,6 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:mobile/core/services/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
-import 'package:mobile/globals.dart' as globals;
 
 class ChatService {
   final dio = Api().dio;

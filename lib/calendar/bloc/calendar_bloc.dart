@@ -12,7 +12,6 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
       emit(CalendarLoading());
       try {
         final schedules = await calendarService.getSchedules();
-        print(schedules);
         emit(CalendarLoaded(schedules: schedules));
       } on Exception catch (e) {
         emit(CalendarError(errorMessage: e.toString()));
