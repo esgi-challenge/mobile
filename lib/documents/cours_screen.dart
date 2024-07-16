@@ -1,19 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
+import 'package:mobile/core/models/document.dart';
 import 'document_card.dart';
 
 class CoursScreen extends StatelessWidget {
-  const CoursScreen({super.key});
+  final List<Document> documents;
+  const CoursScreen({super.key, required this.documents});
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> widgets = [];
+
+    for (var document in documents) {
+      widgets.add(
+        DocumentCard(
+          title: document.name,
+          date: document.date,
+        ),
+      );
+      widgets.add(const SizedBox(height: 8));
+    }
     return Column(
       children: [
         Container(
           decoration: const BoxDecoration(
             border: Border(
-              bottom: BorderSide(
-                  width: 1, color: Color.fromRGBO(72, 2, 151, 1)),
+              bottom:
+                  BorderSide(width: 1, color: Color.fromRGBO(72, 2, 151, 1)),
             ),
           ),
           child: const Row(
@@ -34,19 +47,8 @@ class CoursScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        DocumentCard(
-          title: "Support de cours",
-          date: "15 Avril 2024",
-        ),
-        SizedBox(height: 8),
-        DocumentCard(
-          title: "Sujet TP",
-          date: "15 Avril 2024",
-        ),
-        SizedBox(height: 8),
-        DocumentCard(
-          title: "Exercices",
-          date: "15 Avril 2024",
+        Column(
+          children: widgets,
         ),
       ],
     );

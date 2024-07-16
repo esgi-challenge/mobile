@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
 
+const months = [
+  "Janvier",
+  "Fevrier",
+  "Mars",
+  "Avril",
+  "Mail",
+  "Juin",
+  "Juillet",
+  "Aout",
+  "Septembre",
+  "Octobre",
+  "Novembre",
+  "Decembre",
+];
+
 class DocumentCard extends StatelessWidget {
   final String title;
-  final String date;
+  final DateTime date;
 
   const DocumentCard({
     required this.title,
@@ -55,7 +70,7 @@ class DocumentCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        date,
+                        "${date.day} ${months[date.month - 1]} ${date.year}",
                         style: const TextStyle(
                           fontSize: 14,
                           color: Color.fromRGBO(247, 159, 2, 1),

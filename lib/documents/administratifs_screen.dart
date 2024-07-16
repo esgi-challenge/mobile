@@ -1,28 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/core/models/document.dart';
 import 'document_card.dart';
 
 class AdministratifsScreen extends StatelessWidget {
-  const AdministratifsScreen({super.key});
+  final List<Document> documents;
+  const AdministratifsScreen({super.key, required this.documents});
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: [
+    final List<Widget> widgets = [];
+
+    for (var document in documents) {
+      widgets.add(
         DocumentCard(
-          title: "Web Day",
-          date: "15 Avril 2024",
+          title: document.name,
+          date: document.date,
         ),
-        SizedBox(height: 8),
-        DocumentCard(
-          title: "Choix électifs",
-          date: "15 Avril 2024",
-        ),
-        SizedBox(height: 8),
-        DocumentCard(
-          title: "Calendrier synoptique",
-          date: "15 Avril 2024",
-        ),
-      ],
+      );
+      widgets.add(const SizedBox(height: 8));
+    }
+
+    return Column(
+      children: widgets,
     );
   }
 }
