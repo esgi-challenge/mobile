@@ -1,354 +1,158 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:mobile/collapsible/collapsible.dart';
+import 'package:mobile/more/blocs/more_bloc.dart';
+import 'package:mobile/more/blocs/more_event.dart';
+import 'package:mobile/more/blocs/more_state.dart';
+import 'package:mobile/more/services/more_service.dart';
 
 class MoreCoursesScreen extends StatelessWidget {
   const MoreCoursesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: const Color.fromRGBO(245, 242, 249, 1),
-        body: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Flex(
-            direction: Axis.vertical,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Matières",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w400,
-                  color: Color.fromRGBO(109, 53, 172, 1),
+    return BlocProvider(
+      create: (context) => MoreBloc(MoreService())..add(LoadMore()),
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: const Color.fromRGBO(245, 242, 249, 1),
+          body: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Flex(
+              direction: Axis.vertical,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Matières",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w400,
+                    color: Color.fromRGBO(109, 53, 172, 1),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 40),
-              Column(
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                            width: 1, color: Color.fromRGBO(72, 2, 151, 1)),
-                      ),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "2024",
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w400,
-                              color: Color.fromRGBO(72, 2, 151, 1)),
-                        ),
-                        HeroIcon(
-                          HeroIcons.chevronDown,
-                          color: Color.fromRGBO(72, 2, 151, 1),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Collapsible(
-                    title: "DevOps",
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 32,
-                              height: 32,
-                              color: Colors.amber,
-                            ),
-                            const SizedBox(
-                              width: 12,
-                            ),
-                            const Text(
-                              "Raphaël KIFFER",
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Color.fromRGBO(109, 53, 172, 1),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 32,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Notes:",
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: Color.fromRGBO(109, 53, 172, 1),
-                              ),
-                            ),
-                            const Column(
+                const SizedBox(height: 40),
+                BlocBuilder<MoreBloc, MoreState>(
+                  builder: (context, state) {
+                    if (state is MoreLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is MoreLoaded) {
+                      return Expanded(
+                        child: ListView.builder(
+                          itemCount: state.notes.length,
+                          itemBuilder: (context, index) {
+                            final note = state.notes[index];
+                            double average = note['notes'].fold(0, (sum, item) => sum + item['value']) / note['notes'].length;
+
+                            return Column(
                               children: [
-                                Text(
-                                  "CC1",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromRGBO(109, 53, 172, 1),
+                                const SizedBox(height: 20),
+                                Collapsible(
+                                  title: note['course'],
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: 32,
+                                            height: 32,
+                                            color: Colors.amber,
+                                          ),
+                                          const SizedBox(
+                                            width: 12,
+                                          ),
+                                          Text(
+                                            note['teacher'],
+                                            textAlign: TextAlign.left,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                              color: Color.fromRGBO(109, 53, 172, 1),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 32,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            "Notes:",
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w700,
+                                              color: Color.fromRGBO(109, 53, 172, 1),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 12),
+                                          ...note['notes'].map<Widget>((noteDetail) {
+                                            final projectName = noteDetail['project'].length > 20 ? '${noteDetail['project'].substring(0, 20)}...' : noteDetail['project'];
+
+                                            return Padding(
+                                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    '$projectName: ',
+                                                    textAlign: TextAlign.left,
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight: FontWeight.w600,
+                                                      color: Color.fromRGBO(109, 53, 172, 1),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    noteDetail['value'].toString(),
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w400,
+                                                      color: Color.fromRGBO(145, 103, 193, 1),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            "Moyenne: ${average.toStringAsFixed(2)}",
+                                            textAlign: TextAlign.end,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w700,
+                                              color: Color.fromRGBO(160, 161, 161, 1),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                SizedBox(
-                                  height: 24,
-                                ),
-                                Text(
-                                  "18",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color.fromRGBO(145, 103, 193, 1),
-                                  ),
-                                ),
+                                const SizedBox(height: 12),
                               ],
-                            ),
-                            Container(
-                              width: 1,
-                              height: 64,
-                              color: Color.fromRGBO(247, 159, 2, 1),
-                            ),
-                            const Column(
-                              children: [
-                                Text(
-                                  "CC2",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromRGBO(109, 53, 172, 1),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 24,
-                                ),
-                                Text(
-                                  "18",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color.fromRGBO(145, 103, 193, 1),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              width: 1,
-                              height: 64,
-                              color: Color.fromRGBO(247, 159, 2, 1),
-                            ),
-                            const Column(
-                              children: [
-                                Text(
-                                  "Partiel",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromRGBO(109, 53, 172, 1),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 24,
-                                ),
-                                Text(
-                                  "18",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color.fromRGBO(145, 103, 193, 1),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              width: 1,
-                              height: 64,
-                              color: Colors.white,
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Collapsible(
-                    title: "DevOps",
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 32,
-                              height: 32,
-                              color: Colors.amber,
-                            ),
-                            const SizedBox(
-                              width: 12,
-                            ),
-                            const Text(
-                              "Raphaël KIFFER",
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Color.fromRGBO(109, 53, 172, 1),
-                              ),
-                            ),
-                          ],
+                            );
+                          },
                         ),
-                        const SizedBox(
-                          height: 32,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Notes:",
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: Color.fromRGBO(109, 53, 172, 1),
-                              ),
-                            ),
-                            const Column(
-                              children: [
-                                Text(
-                                  "CC1",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromRGBO(109, 53, 172, 1),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 24,
-                                ),
-                                Text(
-                                  "18",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color.fromRGBO(145, 103, 193, 1),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              width: 1,
-                              height: 64,
-                              color: Color.fromRGBO(247, 159, 2, 1),
-                            ),
-                            const Column(
-                              children: [
-                                Text(
-                                  "CC2",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromRGBO(109, 53, 172, 1),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 24,
-                                ),
-                                Text(
-                                  "18",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color.fromRGBO(145, 103, 193, 1),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              width: 1,
-                              height: 64,
-                              color: Color.fromRGBO(247, 159, 2, 1),
-                            ),
-                            const Column(
-                              children: [
-                                Text(
-                                  "Partiel",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromRGBO(109, 53, 172, 1),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 24,
-                                ),
-                                Text(
-                                  "18",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color.fromRGBO(145, 103, 193, 1),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              width: 1,
-                              height: 64,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            const Text(
-                              "Moyenne: 14.66",
-                              textAlign: TextAlign.end,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: Color.fromRGBO(160, 161, 161, 1),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )
-            ],
+                      );
+                    } else if (state is MoreNotFound) {
+                      return const Center(child: Text("No data found"));
+                    } else if (state is MoreError) {
+                      return Center(child: Text("Error: ${state.errorMessage}"));
+                    }
+                    return Container();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
