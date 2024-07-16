@@ -10,10 +10,18 @@ class Campus {
   });
 
   factory Campus.fromJson(Map<String, dynamic> json) {
-    return Campus(
-      name: json['name'],
-      lat: json['latitude'],
-      lon: json['longitude'],
-    );
+    try {
+      return Campus(
+        name: json['name'],
+        lat: json['latitude'],
+        lon: json['longitude'],
+      );
+    } catch (e) {
+      return Campus(
+        name: "Inconnu",
+        lat: 0.0,
+        lon: 0.0,
+      );
+    }
   }
 }

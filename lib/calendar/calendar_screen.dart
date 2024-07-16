@@ -43,6 +43,7 @@ Map<int, List<Schedule>> getForMonth(int month, List<Schedule> schedules) {
       results[element.date.day] = [element];
     }
   }
+
   return results;
 }
 
@@ -139,10 +140,13 @@ class CalendarScreen extends StatelessWidget {
 
                       final List<Widget> dayLists = [];
 
-                      orderedByDays.entries.forEach((element) {
+                      var keys = orderedByDays.keys.toList()..sort();
+
+                      keys.forEach((key) {
+                        final element = orderedByDays[key]!;
                         final List<Widget> widgets = [];
 
-                        element.value.forEach((schedule) {
+                        element.forEach((schedule) {
                           widgets.add(GestureDetector(
                             onTap: () => {
                               GoRouter.of(context)
@@ -225,7 +229,7 @@ class CalendarScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "${element.key}",
+                                  "${key}",
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
                                       fontSize: 64,

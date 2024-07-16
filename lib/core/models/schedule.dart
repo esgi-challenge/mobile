@@ -19,15 +19,15 @@ class Schedule {
 
   factory Schedule.fromJson(Map<String, dynamic> json) {
     final date = DateTime.fromMillisecondsSinceEpoch(
-        (json['time'] ?? json['schedule']['time']) * 1000);
+        (json['schedule']?['time'] ?? json['time']) * 1000);
 
     return Schedule(
-      id: json['id'] ?? json['schedule']['id'],
+      id: json['schedule']?['id'] ?? json['id'],
       date: date,
-      duration: json['duration'] ?? json['schedule']['duration'] ?? 0,
-      campus: Campus.fromJson(json['campus'] ?? json['schedule']['campus']),
+      duration: json['schedule']?['duration'] ?? json['duration'] ?? 0,
+      campus: Campus.fromJson(json['schedule']?['campus'] ?? json['campus']),
       course:
-          json['course']['name'] ?? json['schedule']['course']['name'] ?? "",
+          json['course']['name'] ?? json['schedule']?['course']['name'] ?? "",
       teacher: json['schedule']?['course']['teacher']['lastname'] ??
           json['course']['teacher']['lastname'] ??
           "",
