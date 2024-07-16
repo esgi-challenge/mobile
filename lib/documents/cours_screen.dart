@@ -16,6 +16,7 @@ class CoursScreen extends StatelessWidget {
         DocumentCard(
           title: document.name,
           date: document.date,
+          path: document.path,
         ),
       );
       widgets.add(const SizedBox(height: 8));

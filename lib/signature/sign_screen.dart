@@ -107,7 +107,7 @@ class _SignScreenState extends State<SignScreen> {
                     );
                   }
 
-                  return Text("AAAA");
+                  return Text("");
                 },
               ),
             ),

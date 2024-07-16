@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:heroicons/heroicons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const months = [
   "Janvier",
@@ -18,11 +20,13 @@ const months = [
 
 class DocumentCard extends StatelessWidget {
   final String title;
+  final String path;
   final DateTime date;
 
   const DocumentCard({
     required this.title,
     required this.date,
+    required this.path,
   });
 
   @override
@@ -81,12 +85,21 @@ class DocumentCard extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              width: 32,
-              height: 32,
-              child: HeroIcon(
-                HeroIcons.eye,
-                color: Color.fromRGBO(247, 159, 2, 1),
+            GestureDetector(
+              onTap: () async {
+                final Uri url = Uri.parse(
+                    'https://storage.googleapis.com/challenge-esgi-preprod-storage/$path');
+                if (!await launchUrl(url)) {
+                  throw Exception('Could not launch $url');
+                }
+              },
+              child: const SizedBox(
+                width: 32,
+                height: 32,
+                child: HeroIcon(
+                  HeroIcons.eye,
+                  color: Color.fromRGBO(247, 159, 2, 1),
+                ),
               ),
             ),
           ],

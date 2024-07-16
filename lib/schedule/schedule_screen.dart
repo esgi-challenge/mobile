@@ -42,6 +42,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+
     return SafeArea(
       child: BlocProvider(
         create: (context) =>
@@ -311,7 +313,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     ),
                     GestureDetector(
                       onTap: () => {
-                        if (!state.signature)
+                        if (!state.signature &&
+                            state.schedule.date.compareTo(now) > 0)
                           GoRouter.of(context)
                               .push('/calendar/${widget.id}/sign')
                               .then((value) => {
@@ -323,7 +326,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: !state.signature
+                          color: !state.signature &&
+                                  state.schedule.date.compareTo(now) > 0
                               ? const Color.fromRGBO(249, 178, 53, 1)
                               : const Color.fromRGBO(249, 178, 53, 0.4),
                           borderRadius:
