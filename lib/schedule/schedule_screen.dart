@@ -314,6 +314,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                         if (!state.signature)
                           GoRouter.of(context)
                               .push('/calendar/${widget.id}/sign')
+                              .then((value) => {
+                                    context
+                                        .read<ScheduleBloc>()
+                                        .add(LoadSchedule(widget.id)),
+                                  })
                       },
                       child: Container(
                         width: double.infinity,

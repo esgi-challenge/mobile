@@ -14,6 +14,7 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
     on<LoadChannels>((event, emit) async {
       emit(ChannelLoading());
       try {
+        await AuthService.init();
         Map<String, dynamic> decodedToken = JwtDecoder.decode(AuthService.jwt!);
         int userKind = decodedToken['user']['userKind'];
 
@@ -32,7 +33,7 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
         if (channels != null && channels.isNotEmpty) {
           originalChannels = channels;
           originalChatters = chatters;
-          emit(ChannelLoaded(channels: channels, chatters: chatters!));
+          emit(ChannelLoaded(channels: channels, chatters: chatters ?? []));
         } else if (chatters != null && chatters.isNotEmpty) {
           originalChatters = chatters;
           originalChannels ??= [];

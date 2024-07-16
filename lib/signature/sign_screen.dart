@@ -83,7 +83,7 @@ class _SignScreenState extends State<SignScreen> {
                   }
 
                   if (state is SignError) {
-                    return const Alert();
+                    return Alert(errorMsg: state.errorMessage);
                   }
 
                   if (state is SignLoaded) {

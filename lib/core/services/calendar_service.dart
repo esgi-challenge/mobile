@@ -60,10 +60,17 @@ class CalendarService {
   }
 
   Future<bool> signFor(int id, String code) async {
-    final response =
-        await dio.post('/api/schedules/$id/sign', data: {"code": code});
-    if (response.statusCode != 201) {
-      throw Exception("Error in the API");
+    try {
+      final response =
+          await dio.post('/api/schedules/$id/sign', data: {"code": code});
+      if (response.statusCode != 201) {
+        throw Exception("Error in the API");
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        return false;
+      }
+      throw Exception("Wrong QRCode");
     }
 
     return true;

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Alert extends StatelessWidget {
-  const Alert({super.key});
+  final String? errorMsg;
+  const Alert({super.key, this.errorMsg});
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +20,13 @@ class Alert extends StatelessWidget {
           ),
         ],
       ),
-      child: const Padding(
-        padding: EdgeInsets.all(16.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               "Erreur:",
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -34,13 +35,13 @@ class Alert extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
             Text(
-              "Une erreur est survenue...",
+              errorMsg ?? "Une erreur est survenue...",
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
