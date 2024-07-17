@@ -27,6 +27,16 @@ jobs:
           echo "Latest tag is : ${OLD_TAG}"
           echo "old_tag=${OLD_TAG}" >> $GITHUB_ENV
 
+      - name: Set api url
+        run: echo API_URL="$API_URL" > dotenv
+        env:
+          API_URL: ${{ secrets.API_URL }}
+
+      - name: Set ws url
+        run: echo WS_URL="$WS_URL" >> dotenv
+        env:
+          API_URL: ${{ secrets.WS_URL }}
+
       - name: Build flutter web app
         run: flutter build apk --release --dart-define APPLICATION_ID=$GMAP_API_KEY
         env:
