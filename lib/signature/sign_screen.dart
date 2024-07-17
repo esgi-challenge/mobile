@@ -45,71 +45,62 @@ class _SignScreenState extends State<SignScreen> {
       child: BlocProvider(
         create: (context) => SignBloc(CalendarService(), widget.id),
         child: Scaffold(
-          body: SingleChildScrollView(
-            child: Container(
-              height: MediaQuery.of(context).size.height,
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color.fromRGBO(72, 2, 151, 1),
-                    Color.fromRGBO(51, 2, 108, 1),
-                  ],
-                ),
+          body: Container(
+            height: MediaQuery.of(context).size.height,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color.fromRGBO(72, 2, 151, 1),
+                  Color.fromRGBO(51, 2, 108, 1),
+                ],
               ),
-              child: BlocBuilder<SignBloc, SignState>(
-                builder: (context, state) {
-                  if (state is SignInitial) {
-                    return Padding(
-                      padding: const EdgeInsets.all(32.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: QRView(
-                              key: _qrKey,
-                              onQRViewCreated: (QRViewController controller) {
-                                _onQRViewCreated(context, controller);
-                              },
-                            ),
-                          ),
-                        ],
+            ),
+            child: BlocBuilder<SignBloc, SignState>(
+              builder: (context, state) {
+                if (state is SignInitial) {
+                  return Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: QRView(
+                      key: _qrKey,
+                      onQRViewCreated: (QRViewController controller) {
+                        _onQRViewCreated(context, controller);
+                      },
+                      overlay: QrScannerOverlayShape(
+                          borderColor: const Color.fromRGBO(249, 141, 53, 1.0)),
+                    ),
+                  );
+                }
+
+                if (state is SignError) {
+                  return Alert(errorMsg: state.errorMessage);
+                }
+
+                if (state is SignLoaded) {
+                  GoRouter.of(context).pop('/calendar/${widget.id}');
+                }
+
+                if (state is SignLoading) {
+                  return const Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    direction: Axis.vertical,
+                    children: [
+                      SizedBox(
+                        height: 48,
                       ),
-                    );
-                  }
+                      CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 3,
+                      )
+                    ],
+                  );
+                }
 
-                  if (state is SignError) {
-                    return Alert(errorMsg: state.errorMessage);
-                  }
-
-                  if (state is SignLoaded) {
-                    GoRouter.of(context).pop('/calendar/${widget.id}');
-                  }
-
-                  if (state is SignLoading) {
-                    return const Wrap(
-                      alignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      direction: Axis.vertical,
-                      children: [
-                        SizedBox(
-                          height: 48,
-                        ),
-                        CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 3,
-                        )
-                      ],
-                    );
-                  }
-
-                  return Text("");
-                },
-              ),
+                return Text("");
+              },
             ),
           ),
         ),
