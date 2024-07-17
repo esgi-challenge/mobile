@@ -37,29 +37,35 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         final updatedProfile = await profileService.updateProfile(event.email);
 
         if (updatedProfile != null) {
-          emit(ProfileLoaded(profile: updatedProfile, classStudent: originalClass));
+          emit(ProfileLoaded(
+              profile: updatedProfile, classStudent: originalClass));
         } else {
-          emit(ProfileLoaded(profile: originalProfile, classStudent: originalClass));
+          emit(ProfileLoaded(
+              profile: originalProfile, classStudent: originalClass));
         }
       } on Exception catch (e) {
-        showErrorToast("Erreur: ${e.toString()}");
-        emit(ProfileLoaded(profile: originalProfile, classStudent: originalClass));
+        showErrorToast("Erreur: ${e.toString().replaceAll('Exception: ', '')}");
+        emit(ProfileLoaded(
+            profile: originalProfile, classStudent: originalClass));
       }
     });
 
     on<UpdateProfilePassword>((event, emit) async {
       emit(ProfileLoading());
       try {
-        final updatedProfile = await profileService.updateProfilePassword(event.oldPassword, event.newPassword);
+        final updatedProfile = await profileService.updateProfilePassword(
+            event.oldPassword, event.newPassword);
 
         if (updatedProfile != null) {
           emit(ProfilePasswordUpdated());
         } else {
-          emit(ProfileLoaded(profile: originalProfile, classStudent: originalClass));
+          emit(ProfileLoaded(
+              profile: originalProfile, classStudent: originalClass));
         }
       } on Exception catch (e) {
-        showErrorToast("Erreur: ${e.toString()}");
-        emit(ProfileLoaded(profile: originalProfile, classStudent: originalClass));
+        showErrorToast("Erreur: ${e.toString().replaceAll('Exception: ', '')}");
+        emit(ProfileLoaded(
+            profile: originalProfile, classStudent: originalClass));
       }
     });
   }

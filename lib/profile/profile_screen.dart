@@ -66,9 +66,9 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              state.classStudent != null 
-                                ? '${state.classStudent['name']}' 
-                                : 'Dans aucune classe',
+                              state.classStudent != null
+                                  ? '${state.classStudent['name']}'
+                                  : 'Dans aucune classe',
                               style: const TextStyle(
                                 fontSize: 18,
                                 color: Color.fromRGBO(72, 2, 151, 1),
@@ -83,7 +83,8 @@ class ProfileScreen extends StatelessWidget {
                       } else if (state is ProfileNotFound) {
                         return const Center(child: Text('Profil non trouvé'));
                       } else if (state is ProfileError) {
-                        return Center(child: Text('Erreur: ${state.errorMessage}'));
+                        return Center(
+                            child: Text('Erreur: ${state.errorMessage}'));
                       } else if (state is ProfilePasswordUpdated) {
                         _logout(context);
                         return const Center(child: Text('Profil'));
@@ -143,8 +144,8 @@ class ProfileScreen extends StatelessWidget {
               onPressed: () {
                 if (_updateFormKey.currentState!.validate()) {
                   context.read<ProfileBloc>().add(UpdateProfile(
-                    _emailController.text,
-                  ));
+                        _emailController.text,
+                      ));
                 }
               },
               style: TextButton.styleFrom(
@@ -263,9 +264,9 @@ class ProfileScreen extends StatelessWidget {
               onPressed: () {
                 if (_updatePasswordFormKey.currentState!.validate()) {
                   context.read<ProfileBloc>().add(UpdateProfilePassword(
-                    _oldPasswordController.text,
-                    _newPasswordController.text,
-                  ));
+                        _oldPasswordController.text,
+                        _newPasswordController.text,
+                      ));
                   _clearInputs();
                 }
               },

@@ -23,7 +23,6 @@ import 'package:mobile/schedule/schedule_screen.dart';
 import 'package:mobile/signature/sign_screen.dart';
 import 'package:toastification/toastification.dart';
 
-
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 final _router = GoRouter(
@@ -132,7 +131,9 @@ final _router = GoRouter(
             parentNavigatorKey: _shellNavigatorKey,
             path: '/chat/:id',
             pageBuilder: (context, state) {
-              return NoTransitionPage(child: ChannelIdScreen(id: int.parse(state.pathParameters['id']!)));
+              return NoTransitionPage(
+                  child: ChannelIdScreen(
+                      id: int.parse(state.pathParameters['id']!)));
             },
           ),
           GoRoute(
@@ -188,32 +189,34 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AuthBloc()..add(AuthInit()),
-      child: MaterialApp.router(
-        routerConfig: _router,
-        debugShowCheckedModeBanner: true,
-        title: "Studies",
-        // routes: {
-        //   '/calendar': (context) => const CalendarScreen(),
-        // },
-        // initialRoute: '/calendar',
-        // home: const NavigationBar(),
-        theme: ThemeData(
-          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-              backgroundColor: Colors.white,
-              elevation: 0,
-              selectedItemColor: Color.fromRGBO(109, 53, 172, 1),
-              unselectedLabelStyle:
-                  TextStyle(color: Color.fromRGBO(190, 191, 190, 1)),
-              unselectedItemColor: Color.fromRGBO(190, 191, 190, 1),
-              unselectedIconTheme:
-                  IconThemeData(color: Color.fromRGBO(190, 191, 190, 1)),
-              selectedIconTheme:
-                  IconThemeData(color: Color.fromRGBO(109, 53, 172, 1))),
-          textTheme: const TextTheme(
-            displayLarge: TextStyle(
-              color: Colors.amber,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
+      child: ToastificationWrapper(
+        child: MaterialApp.router(
+          routerConfig: _router,
+          debugShowCheckedModeBanner: true,
+          title: "Studies",
+          // routes: {
+          //   '/calendar': (context) => const CalendarScreen(),
+          // },
+          // initialRoute: '/calendar',
+          // home: const NavigationBar(),
+          theme: ThemeData(
+            bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+                backgroundColor: Colors.white,
+                elevation: 0,
+                selectedItemColor: Color.fromRGBO(109, 53, 172, 1),
+                unselectedLabelStyle:
+                    TextStyle(color: Color.fromRGBO(190, 191, 190, 1)),
+                unselectedItemColor: Color.fromRGBO(190, 191, 190, 1),
+                unselectedIconTheme:
+                    IconThemeData(color: Color.fromRGBO(190, 191, 190, 1)),
+                selectedIconTheme:
+                    IconThemeData(color: Color.fromRGBO(109, 53, 172, 1))),
+            textTheme: const TextTheme(
+              displayLarge: TextStyle(
+                color: Colors.amber,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
@@ -233,7 +236,6 @@ class NavigationBar extends StatefulWidget {
 
 class _NavigationBarState extends State<NavigationBar> {
   int _selectedIndex = 0;
-
 
   Future<void> _logout(BuildContext context) async {
     await AuthService.logout();

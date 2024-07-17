@@ -13,9 +13,7 @@ class ProfileService {
     try {
       final response = await dio.get(
         '$apiUrl/api/users/me',
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'}
-        ),
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
       if (response.statusCode == 200) {
@@ -34,9 +32,7 @@ class ProfileService {
     try {
       final response = await dio.get(
         '$apiUrl/api/classes/student',
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'}
-        ),
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
       if (response.statusCode == 200) {
@@ -57,24 +53,23 @@ class ProfileService {
     String lastname = decodedToken['user']['lastname'];
 
     try {
-      final response = await dio.put(
-        '$apiUrl/api/users/me',
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'}
-        ),
-        data: {
-          'firstname': firstname,
-          'lastname': lastname,
-          'email': email,
-        }
-      );
+      final response = await dio.put('$apiUrl/api/users/me',
+          options: Options(headers: {'Authorization': 'Bearer $token'}),
+          data: {
+            'firstname': firstname,
+            'lastname': lastname,
+            'email': email,
+          });
 
       if (response.statusCode == 200) {
         return response.data;
       } else {
         return null;
       }
-    } on DioException {
+    } on DioException catch (e) {
+      if (e.response != null && e.response!.statusCode == 409) {
+        throw Exception('Email is already used');
+      }
       return null;
     }
   }
@@ -83,23 +78,22 @@ class ProfileService {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('kAuth');
     try {
-      final response = await dio.put(
-        '$apiUrl/api/users/me/password',
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'}
-        ),
-        data: {
-          'old_password': oldPassword,
-          'new_password': newPassword,
-        }
-      );
+      final response = await dio.put('$apiUrl/api/users/me/password',
+          options: Options(headers: {'Authorization': 'Bearer $token'}),
+          data: {
+            'old_password': oldPassword,
+            'new_password': newPassword,
+          });
 
       if (response.statusCode == 200) {
         return response.data;
       } else {
         return null;
       }
-    } on DioException {
+    } on DioException catch (e) {
+      if (e.response != null && e.response!.statusCode == 401) {
+        throw Exception('Mauvais mot de passe');
+      }
       return null;
     }
   }
