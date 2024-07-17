@@ -28,7 +28,9 @@ jobs:
           echo "old_tag=${OLD_TAG}" >> $GITHUB_ENV
 
       - name: Build flutter web app
-        run: flutter build apk --release --dart-define APPLICATION_ID=${{ secrets.GMAP_API_KEY }}
+        run: flutter build apk --release --dart-define APPLICATION_ID=$GMAP_API_KEY
+        env:
+          GMAP_API_KEY: ${{ secrets.GMAP_API_KEY }}
 
       - name: Create new tag
         run: |
