@@ -21,6 +21,8 @@ import 'package:mobile/profile/profile_screen.dart';
 import 'package:mobile/projects/projects_screen.dart';
 import 'package:mobile/schedule/schedule_screen.dart';
 import 'package:mobile/signature/sign_screen.dart';
+import 'package:toastification/toastification.dart';
+
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -137,7 +139,7 @@ final _router = GoRouter(
             parentNavigatorKey: _shellNavigatorKey,
             path: '/more',
             pageBuilder: (context, state) {
-              return const NoTransitionPage(child: ProfileScreen());
+              return NoTransitionPage(child: ProfileScreen());
             },
           ),
           GoRoute(
@@ -165,7 +167,7 @@ final _router = GoRouter(
             parentNavigatorKey: _shellNavigatorKey,
             path: '/profile',
             pageBuilder: (context, state) {
-              return const NoTransitionPage(child: ProfileScreen());
+              return NoTransitionPage(child: ProfileScreen());
             },
           ),
           GoRoute(
