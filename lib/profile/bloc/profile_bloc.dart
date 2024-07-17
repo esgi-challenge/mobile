@@ -11,15 +11,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   ProfileBloc(this.profileService) : super(ProfileInitial()) {
     dynamic originalProfile;
+    dynamic originalClass;
 
     on<LoadProfile>((event, emit) async {
       emit(ProfileLoading());
       try {
         final profile = await profileService.getMe();
+        final classStudent = await profileService.getMeClass();
 
         if (profile != null && profile.isNotEmpty) {
           originalProfile = profile;
-          emit(ProfileLoaded(profile: profile));
+          originalClass = classStudent;
+          emit(ProfileLoaded(profile: profile, classStudent: classStudent));
         } else {
           emit(ProfileNotFound());
         }
@@ -31,18 +34,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<UpdateProfile>((event, emit) async {
       emit(ProfileLoading());
       try {
-        final updatedProfile = await profileService.updateProfile(event.email, event.phone);
+        final updatedProfile = await profileService.updateProfile(event.email);
 
         if (updatedProfile != null) {
-          emit(ProfileLoaded(profile: updatedProfile));
-          showSuccessToast("Profil modifié avec succès");
+          emit(ProfileLoaded(profile: updatedProfile, classStudent: originalClass));
         } else {
-          showErrorToast("Erreur lors de la modification");
-          emit(ProfileLoaded(profile: originalProfile));
+          emit(ProfileLoaded(profile: originalProfile, classStudent: originalClass));
         }
       } on Exception catch (e) {
         showErrorToast("Erreur: ${e.toString()}");
-        emit(ProfileLoaded(profile: originalProfile));
+        emit(ProfileLoaded(profile: originalProfile, classStudent: originalClass));
       }
     });
 
@@ -53,14 +54,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
         if (updatedProfile != null) {
           emit(ProfilePasswordUpdated());
-          showSuccessToast("Mot de passe modifié avec succès");
         } else {
-          showErrorToast("Erreur lors de la modification");
-          emit(ProfileLoaded(profile: originalProfile));
+          emit(ProfileLoaded(profile: originalProfile, classStudent: originalClass));
         }
       } on Exception catch (e) {
         showErrorToast("Erreur: ${e.toString()}");
-        emit(ProfileLoaded(profile: originalProfile));
+        emit(ProfileLoaded(profile: originalProfile, classStudent: originalClass));
       }
     });
   }

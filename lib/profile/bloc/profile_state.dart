@@ -9,8 +9,9 @@ class ProfileLoading extends ProfileState {}
 
 class ProfileLoaded extends ProfileState {
   final dynamic profile;
+  final dynamic classStudent;
 
-  ProfileLoaded({required this.profile});
+  ProfileLoaded({required this.profile, required this.classStudent});
 }
 
 class ProfileNotFound extends ProfileState {}

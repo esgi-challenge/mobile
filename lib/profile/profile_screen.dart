@@ -11,7 +11,6 @@ class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
 
   final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
 
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
@@ -36,9 +35,9 @@ class ProfileScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => ProfileBloc(ProfileService())..add(LoadProfile()),
       child: Scaffold(
-        backgroundColor: Color.fromRGBO(245, 242, 249, 1),
+        backgroundColor: const Color.fromRGBO(245, 242, 249, 1),
         body: Padding(
-          padding: EdgeInsets.all(32.0),
+          padding: const EdgeInsets.all(32.0),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -67,7 +66,9 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              '${state.profile['classRefer']}',
+                              state.classStudent != null 
+                                ? '${state.classStudent['name']}' 
+                                : 'Dans aucune classe',
                               style: const TextStyle(
                                 fontSize: 18,
                                 color: Color.fromRGBO(72, 2, 151, 1),
@@ -102,10 +103,9 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildProfileForm(BuildContext context, dynamic profile) {
     _emailController.text = profile['email'];
-    _phoneController.text = profile['phone'];
 
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -138,29 +138,12 @@ class ProfileScreen extends StatelessWidget {
               ),
               validator: InputValidator.validateEmail,
             ),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _phoneController,
-              decoration: const InputDecoration(
-                hintText: 'Téléphone',
-                hintStyle: TextStyle(
-                  color: Color.fromRGBO(72, 2, 151, 1),
-                  fontWeight: FontWeight.normal,
-                ),
-                border: UnderlineInputBorder(),
-              ),
-              style: const TextStyle(
-                color: Color.fromRGBO(72, 2, 151, 1),
-              ),
-              validator: InputValidator.validatePhone,
-            ),
             const SizedBox(height: 32),
             TextButton(
               onPressed: () {
                 if (_updateFormKey.currentState!.validate()) {
                   context.read<ProfileBloc>().add(UpdateProfile(
                     _emailController.text,
-                    _phoneController.text,
                   ));
                 }
               },

@@ -16,16 +16,6 @@ class InputValidator {
     return null;
   }
 
-  static String? validatePhone(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Numéro de téléphone est requis';
-    }
-    if (!RegExp(r'^\d{10}$').hasMatch(value)) {
-      return 'Le numéro de téléphone doit avoir 10 chiffres';
-    }
-    return null;
-  }
-
   static String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Mot de passe est requis';

@@ -7,9 +7,8 @@ class LoadProfile extends ProfileEvent {}
 
 class UpdateProfile extends ProfileEvent {
   final String email;
-  final String phone;
 
-  UpdateProfile(this.email, this.phone);
+  UpdateProfile(this.email);
 }
 
 class UpdateProfilePassword extends ProfileEvent {
