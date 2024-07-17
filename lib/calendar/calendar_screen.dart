@@ -149,6 +149,8 @@ class CalendarScreen extends StatelessWidget {
                         final List<Widget> widgets = [];
 
                         element.forEach((schedule) {
+                          final endDate = schedule.date
+                              .add(Duration(minutes: schedule.duration));
                           widgets.add(GestureDetector(
                             onTap: () => {
                               GoRouter.of(context)
@@ -156,7 +158,7 @@ class CalendarScreen extends StatelessWidget {
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                color: now.compareTo(schedule.date) < 0
+                                color: now.compareTo(endDate) < 0
                                     ? const Color.fromRGBO(72, 2, 151, 1)
                                     : const Color.fromRGBO(72, 2, 151, 0.5),
                                 borderRadius:
