@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:mobile/core/models/document.dart';
 
 class Project {
   final int id;
@@ -6,6 +7,7 @@ class Project {
   final String course;
   final String teacher;
   final DateTime endDate;
+  final Document document;
 
   Project({
     required this.id,
@@ -13,16 +15,21 @@ class Project {
     required this.course,
     required this.teacher,
     required this.endDate,
+    required this.document,
   });
 
   factory Project.fromJson(Map<String, dynamic> json) {
     final endDate = DateFormat("dd-MM-yyyy").parse(json['endDate']);
+
+    print(json['document']);
+
     return Project(
       id: json['id'],
       title: json['title'],
       course: json['course']['name'],
       teacher: json['course']['teacher']['lastname'],
       endDate: endDate,
+      document: Document.fromJson(json['document']),
     );
   }
 
@@ -33,6 +40,7 @@ class Project {
       'course': course,
       'teacher': teacher,
       'endDate': endDate,
+      'document': document,
     };
   }
 }

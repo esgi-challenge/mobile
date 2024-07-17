@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:mobile/core/models/project.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const months = [
   "Janvier",
@@ -82,38 +84,38 @@ class MyGroupScreen extends StatelessWidget {
                           color: Color.fromRGBO(72, 2, 151, 1),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         project.course,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
                           color: Color.fromRGBO(72, 2, 151, 1),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Row(
                         children: [
-                          HeroIcon(
+                          const HeroIcon(
                             HeroIcons.calendarDays,
                             color: Color.fromRGBO(247, 159, 2, 1),
                             size: 16,
                           ),
-                          SizedBox(width: 4),
+                          const SizedBox(width: 4),
                           Text(
                             "${project.endDate.day} ${months[project.endDate.month - 1]} ${project.endDate.year}",
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
                               color: Color.fromRGBO(247, 159, 2, 1),
                             ),
                           ),
-                          SizedBox(width: 32),
-                          HeroIcon(
+                          const SizedBox(width: 32),
+                          const HeroIcon(
                             HeroIcons.clock,
                             color: Color.fromRGBO(247, 159, 2, 1),
                             size: 16,
                           ),
-                          SizedBox(width: 4),
-                          Text(
+                          const SizedBox(width: 4),
+                          const Text(
                             "23h59",
                             style: TextStyle(
                               fontSize: 14,
@@ -262,39 +264,48 @@ class MyGroupScreen extends StatelessWidget {
               // ),
 
               const SizedBox(height: 32),
-              Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Color.fromRGBO(249, 178, 53, 1),
-                  borderRadius: BorderRadius.all(Radius.circular(4)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color.fromRGBO(249, 178, 53, 0.1),
-                      spreadRadius: 0,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      HeroIcon(
-                        HeroIcons.userCircle,
-                        color: Colors.white,
-                        size: 32,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        "Voir le sujet",
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
+              GestureDetector(
+                onTap: () async {
+                  final Uri url = Uri.parse(
+                      'https://storage.googleapis.com/challenge-esgi-preprod-storage/${project.document.path}');
+                  if (!await launchUrl(url)) {
+                    throw Exception('Could not launch $url');
+                  }
+                },
+                child: Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Color.fromRGBO(249, 178, 53, 1),
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color.fromRGBO(249, 178, 53, 0.1),
+                        spreadRadius: 0,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
                       ),
                     ],
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        HeroIcon(
+                          HeroIcons.userCircle,
+                          color: Colors.white,
+                          size: 32,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          "Voir le sujet",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
