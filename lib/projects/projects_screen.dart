@@ -92,7 +92,7 @@ class ProjectsScreen extends StatelessWidget {
                         }
 
                         if (state is ProjectsError) {
-                          return const Alert();
+                          return Alert(errorMsg: state.errorMessage);
                         }
 
                         if (state is ProjectsLoaded) {

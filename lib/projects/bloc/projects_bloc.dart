@@ -11,7 +11,6 @@ class ProjectsBloc extends Bloc<ProjectsEvent, ProjectsState> {
       emit(ProjectsLoading());
       try {
         final projects = await projectsService.getProjects();
-        print(projects);
         emit(ProjectsLoaded(projects: projects));
       } on Exception catch (e) {
         emit(ProjectsError(errorMessage: e.toString()));

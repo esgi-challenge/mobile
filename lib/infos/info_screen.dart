@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile/alert/alert.dart';
 import 'package:mobile/core/models/information.dart';
 import 'package:mobile/infos/blocs/informations_bloc.dart';
 import 'package:mobile/infos/blocs/informations_event.dart';
@@ -63,127 +64,137 @@ class InfoScreen extends StatelessWidget {
                         color: Color.fromRGBO(109, 53, 172, 1)),
                   ),
                   const SizedBox(height: 40),
-                  BlocBuilder<InformationsBloc, InformationState>(
+                  BlocBuilder<InformationsBloc, ProjectsState>(
                     builder: (context, state) {
-                      if (state.status == InformationStatus.loading) {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            color: Color.fromRGBO(109, 53, 172, 1),
-                            strokeWidth: 3,
-                          ),
+                      if (state is InformationError) {
+                        return Alert(
+                          errorMsg: state.errorMessage,
                         );
                       }
 
-                      final List<Widget> globalsWidgets = [];
+                      if (state is InformationLoad) {
+                        if (state.status == InformationStatus.loading) {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: Color.fromRGBO(109, 53, 172, 1),
+                              strokeWidth: 3,
+                            ),
+                          );
+                        }
 
-                      if (state.informations != null) {
-                        final ordered = orderByMonth(state.informations!);
+                        final List<Widget> globalsWidgets = [];
 
-                        for (var element in ordered.entries) {
-                          final List<Widget> widgets = [];
+                        if (state.informations != null) {
+                          final ordered = orderByMonth(state.informations!);
 
-                          widgets.add(Text(
-                            element.key,
-                            textAlign: TextAlign.left,
-                            style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w800,
-                                color: Color.fromRGBO(109, 53, 172, 1)),
-                          ));
+                          for (var element in ordered.entries) {
+                            final List<Widget> widgets = [];
 
-                          widgets.add(const SizedBox(height: 20));
+                            widgets.add(Text(
+                              element.key,
+                              textAlign: TextAlign.left,
+                              style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color.fromRGBO(109, 53, 172, 1)),
+                            ));
 
-                          for (var information in element.value) {
-                            final date = DateTime.parse(information.date);
-                            widgets.add(
-                              Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8)),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Color.fromRGBO(50, 50, 50, 0.1),
-                                      spreadRadius: 0,
-                                      blurRadius: 5,
-                                      offset: Offset(
-                                          0, 3), // changes position of shadow
-                                    ),
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    information.title,
-                                                    textAlign: TextAlign.left,
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        color: Color.fromRGBO(
-                                                            109, 53, 172, 1)),
-                                                  ),
-                                                  Text(
-                                                    DateFormat("dd/MM/yyyy")
-                                                        .format(date),
-                                                    textAlign: TextAlign.left,
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        color: Color.fromRGBO(
-                                                            247, 159, 2, 1)),
-                                                  ),
-                                                ]),
-                                            Text(
-                                              information.description,
-                                              textAlign: TextAlign.left,
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Color.fromRGBO(
-                                                      141, 143, 142, 1)),
-                                            ),
-                                          ],
-                                        ),
+                            widgets.add(const SizedBox(height: 20));
+
+                            for (var information in element.value) {
+                              final date = DateTime.parse(information.date);
+                              widgets.add(
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Color.fromRGBO(50, 50, 50, 0.1),
+                                        spreadRadius: 0,
+                                        blurRadius: 5,
+                                        offset: Offset(
+                                            0, 3), // changes position of shadow
                                       ),
                                     ],
                                   ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      information.title,
+                                                      textAlign: TextAlign.left,
+                                                      style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          color: Color.fromRGBO(
+                                                              109, 53, 172, 1)),
+                                                    ),
+                                                    Text(
+                                                      DateFormat("dd/MM/yyyy")
+                                                          .format(date),
+                                                      textAlign: TextAlign.left,
+                                                      style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          color: Color.fromRGBO(
+                                                              247, 159, 2, 1)),
+                                                    ),
+                                                  ]),
+                                              Text(
+                                                information.description,
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Color.fromRGBO(
+                                                        141, 143, 142, 1)),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            );
-                            widgets.add(const SizedBox(height: 10));
+                              );
+                              widgets.add(const SizedBox(height: 10));
+                            }
+
+                            widgets.add(const SizedBox(height: 40));
+
+                            globalsWidgets.add(Flex(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                direction: Axis.vertical,
+                                children: widgets));
                           }
-
-                          widgets.add(const SizedBox(height: 40));
-
-                          globalsWidgets.add(Flex(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              direction: Axis.vertical,
-                              children: widgets));
                         }
+
+                        return Flex(
+                          direction: Axis.vertical,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          // spacing: 10,
+                          children: globalsWidgets,
+                        );
                       }
 
-                      return Flex(
-                        direction: Axis.vertical,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        // spacing: 10,
-                        children: globalsWidgets,
-                      );
+                      return Container();
                     },
                   ),
                 ],

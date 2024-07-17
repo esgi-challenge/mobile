@@ -123,7 +123,9 @@ class CalendarScreen extends StatelessWidget {
                       }
 
                       if (state is CalendarError) {
-                        return const Alert();
+                        return Alert(
+                          errorMsg: state.errorMessage,
+                        );
                       }
 
                       if (state is! CalendarLoaded) {
