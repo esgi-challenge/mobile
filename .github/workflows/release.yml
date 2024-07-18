@@ -35,7 +35,7 @@ jobs:
       - name: Set ws url
         run: echo WS_URL="$WS_URL" >> dotenv
         env:
-          API_URL: ${{ secrets.WS_URL }}
+          WS_URL: ${{ secrets.WS_URL }}
 
       - name: Build flutter web app
         run: flutter build apk --release --dart-define APPLICATION_ID=$GMAP_API_KEY
