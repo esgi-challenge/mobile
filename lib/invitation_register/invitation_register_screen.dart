@@ -184,7 +184,7 @@ class _InvitationRegisterScreenState extends State<InvitationRegisterScreen> {
                             }
 
                             GoRouter router = GoRouter.of(context);
-                            router.push('/');
+                            router.push('/login');
                           }),
                           style: TextButton.styleFrom(
                             minimumSize: Size.zero,
