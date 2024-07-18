@@ -19,7 +19,7 @@ class Project {
   });
 
   factory Project.fromJson(Map<String, dynamic> json) {
-    final endDate = DateFormat("dd-MM-yyyy").parse(json['endDate']);
+    final endDate = DateTime.parse(json['endDate']);
 
     return Project(
       id: json['id'],
