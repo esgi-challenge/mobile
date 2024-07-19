@@ -36,3 +36,7 @@ Liste des features :
 | chat temps réel | Lucas Campistron |
 | matière/notes | Lucas Campistron |
 | profil (api, BLoC) | Lucas Campistron |
+| profil (UI), chat (UI), emplois du temps (UI), chat (UI), documents (UI), profil (UI), projet (UI)  | Izïa Crinier |
+| Mdp oublié, cŕeation de compte via invitation | Antoine Lorin |
+| Emplois du temps (api, BLoC), documents (api, BLoC), projets (api BLoC) | Antoine Lorin |
+| Signature qr code | Antoine Lorin |
